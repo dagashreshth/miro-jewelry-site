@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shopping Bag — Miró Fine Jewelry</title>
+  <meta name="description" content="Review the pieces reserved in your Miró shopping bag — complimentary insured shipping over ₹50,000, gift notes on letterpress cards and a GST tax invoice with every order.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Mulish:wght@300;400;500;600;700&family=Monsieur+La+Doulaise&display=swap" rel="stylesheet">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='48' fill='%23bf2563'/%3E%3Ctext x='50' y='68' font-size='58' text-anchor='middle' fill='%23e8ddcf' font-family='Georgia,serif' font-style='italic'%3EM%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="assets/css/main.css">
+  <link rel="stylesheet" href="assets/css/cart.css">
+  <script src="assets/js/analytics.js"></script>
+</head>
+<body data-page="cart">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div id="site-chrome-top"></div>
+
+  <main id="main">
+
+    <!-- ============ Page hero ============ -->
+    <section class="page-hero" aria-labelledby="bag-title">
+      <div class="container">
+        <p class="eyebrow reveal">Your selection</p>
+        <h1 id="bag-title" class="reveal reveal--d1">Shopping bag</h1>
+        <p class="bag-count js-bag-count reveal reveal--d2" aria-live="polite">&nbsp;</p>
+      </div>
+    </section>
+
+    <!-- ============ Bag contents + order summary ============ -->
+    <section class="section--tight bag" aria-label="Bag contents">
+      <div class="container">
+
+        <div class="bag__layout js-bag-filled" hidden>
+
+          <div class="bag__items">
+            <h2 class="sr-only">Pieces in your bag</h2>
+
+            <!-- Free-shipping progress -->
+            <div class="ship-note js-ship-note" aria-live="polite">
+              <p class="ship-note__text js-ship-text"></p>
+              <div class="ship-note__track" aria-hidden="true"><span class="ship-note__fill js-ship-fill"></span></div>
+            </div>
+
+            <!-- Line items (rendered by cart.js) -->
+            <ul class="bag__list js-lines" role="list"></ul>
+
+            <!-- Gift note -->
+            <div class="gift">
+              <label class="checkbox-row gift__toggle" for="gift-toggle">
+                <input type="checkbox" id="gift-toggle" class="js-gift-toggle" aria-controls="gift-panel">
+                <span class="gift__label">
+                  <strong>This is a gift</strong>
+                  <small>We'll tuck a handwritten card into the wrapping — on us.</small>
+                </span>
+              </label>
+              <div class="gift__panel" id="gift-panel" hidden>
+                <div class="field">
+                  <label for="gift-message">Your card message</label>
+                  <textarea class="textarea js-gift-text" id="gift-message" rows="4" maxlength="240"
+                    placeholder="For Amma — happy sixtieth. All my love, R."></textarea>
+                  <p class="hint gift__hint">
+                    <span>We hand-write your words on a letterpress card and seal it before wrapping.</span>
+                    <span class="js-gift-count">0/240</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <p class="bag__assure">Fully insured delivery · 15-day returns · BIS-hallmarked gold · Lifetime care</p>
+          </div>
+
+          <!-- Order summary -->
+          <aside class="bag__summary" aria-labelledby="summary-title">
+            <div class="summary-card">
+              <h2 id="summary-title">Order summary</h2>
+              <div class="js-sum-live" aria-live="polite">
+                <dl class="sum-rows">
+                  <div class="sum-row"><dt>Subtotal</dt><dd class="js-sum-subtotal">—</dd></div>
+                  <div class="sum-row"><dt>Shipping</dt><dd class="js-sum-shipping">—</dd></div>
+                </dl>
+                <p class="sum-note">All prices include 3% GST — your tax invoice is issued at checkout.</p>
+                <div class="sum-total"><span>Total</span><strong class="js-sum-total">—</strong></div>
+              </div>
+              <a class="btn btn--lg btn--block js-checkout" href="checkout.html">Proceed to checkout</a>
+              <p class="sum-continue">or <a href="collections.html">continue shopping</a></p>
+              <div class="sum-pay">
+                <p class="sum-pay__label">Secure payment</p>
+                <ul role="list">
+                  <li>Razorpay</li>
+                  <li>UPI</li>
+                  <li>Cards</li>
+                  <li>EMI</li>
+                </ul>
+              </div>
+              <a class="sum-wa js-wa-help" href="https://wa.me/919820012345" target="_blank" rel="noopener"><span>Questions? WhatsApp our concierge</span></a>
+            </div>
+          </aside>
+        </div>
+
+        <!-- Empty state -->
+        <div class="bag-empty js-bag-empty" hidden>
+          <h2 class="bag-empty__title h-serif-italic reveal">Your bag is waiting to be filled…</h2>
+          <p class="reveal reveal--d1">Nothing reserved just yet — and every collection begins exactly here. Wander
+            the full edit, or start with the pieces our clients fall for first.</p>
+          <a class="btn btn--lg js-empty-cta reveal reveal--d2" href="collections.html">Explore the collection</a>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ============ Empty-state rail: bestsellers ============ -->
+    <section class="section section--cream-soft bag-icons js-icons" aria-labelledby="icons-title" hidden>
+      <div class="container">
+        <div class="icons-head reveal">
+          <p class="eyebrow">A place to begin</p>
+          <h2 id="icons-title">Start with the icons</h2>
+          <p>Worn on repeat and gifted on instinct — the four pieces that begin most Miró collections.</p>
+        </div>
+        <div class="icons-rail js-icons-rail reveal"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <div id="site-chrome-bottom"></div>
+  <script src="assets/js/store.js"></script>
+  <script src="assets/js/layout.js"></script>
+  <script src="assets/js/cart.js"></script>
+</body>
+</html>

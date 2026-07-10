@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact &amp; Appointments — Miró Fine Jewelry</title>
+  <meta name="description" content="Write to Miró or book a private appointment at our Kala Ghoda atelier in Mumbai. We reply within four working hours — appointments are confirmed on WhatsApp.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Mulish:wght@300;400;500;600;700&family=Monsieur+La+Doulaise&display=swap" rel="stylesheet">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='48' fill='%23bf2563'/%3E%3Ctext x='50' y='68' font-size='58' text-anchor='middle' fill='%23e8ddcf' font-family='Georgia,serif' font-style='italic'%3EM%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="assets/css/main.css">
+  <link rel="stylesheet" href="assets/css/contact.css">
+  <script src="assets/js/analytics.js"></script>
+</head>
+<body data-page="contact">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div id="site-chrome-top"></div>
+
+  <main id="main">
+
+    <!-- ============ Page hero ============ -->
+    <section class="page-hero" aria-labelledby="contact-title">
+      <div class="container">
+        <p class="eyebrow reveal">The atelier</p>
+        <h1 id="contact-title" class="reveal reveal--d1">Speak with <em class="h-serif-italic">Miró</em></h1>
+        <p class="lede reveal reveal--d2">Sizing questions, bespoke ideas, order help — or simply the wish
+          to try things on in good light. Write to us below, or ask for a private appointment at the
+          Kala Ghoda atelier. Every note is read by a person, and the kettle is nearly always on.</p>
+      </div>
+    </section>
+
+    <!-- ============ Split: form + atelier card ============ -->
+    <section class="section contact-main" aria-labelledby="form-title">
+      <div class="container contact-grid">
+
+        <!-- ——— Left: the form (first in DOM so it stacks first on mobile) ——— -->
+        <div class="contact-col">
+          <div class="contact-form-head js-form-wrap">
+            <p class="eyebrow reveal">Write to us</p>
+            <h2 id="form-title" class="reveal reveal--d1">Send a note to the atelier</h2>
+            <p class="contact-intro reveal reveal--d2">Tell us what you're dreaming about — a stone, a date,
+              a budget, a beloved. The more you share, the better we prepare; everything you write stays
+              between you and the atelier.</p>
+
+            <form class="contact-form js-contact-form reveal reveal--d2" novalidate>
+              <div class="field">
+                <label for="cf-name">Full name</label>
+                <input class="input" id="cf-name" name="name" type="text" autocomplete="name"
+                       placeholder="Aisha Verma" aria-describedby="cf-name-err">
+                <p class="error-msg" id="cf-name-err">Please tell us your name — we'd like to address you properly.</p>
+              </div>
+
+              <div class="contact-form__row">
+                <div class="field">
+                  <label for="cf-email">Email</label>
+                  <input class="input" id="cf-email" name="email" type="email" autocomplete="email"
+                         placeholder="you@example.in" aria-describedby="cf-email-err">
+                  <p class="error-msg" id="cf-email-err">That email doesn't look complete — mind checking it?</p>
+                </div>
+                <div class="field">
+                  <label for="cf-phone">Phone</label>
+                  <input class="input" id="cf-phone" name="phone" type="tel" autocomplete="tel"
+                         inputmode="numeric" maxlength="16" placeholder="98200 12345"
+                         aria-describedby="cf-phone-hint cf-phone-err">
+                  <p class="hint" id="cf-phone-hint">10 digits — we'll only call if you ask us to.</p>
+                  <p class="error-msg" id="cf-phone-err">Please enter a valid 10-digit mobile number.</p>
+                </div>
+              </div>
+
+              <div class="field">
+                <label for="cf-topic">What's this about?</label>
+                <select class="select" id="cf-topic" name="topic" aria-describedby="cf-topic-err">
+                  <option value="" selected>Choose a topic…</option>
+                  <option value="general">General question</option>
+                  <option value="appointment">Book an appointment</option>
+                  <option value="order-support">Order support</option>
+                  <option value="bespoke">Bespoke commission</option>
+                  <option value="press">Press &amp; partnerships</option>
+                </select>
+                <p class="error-msg" id="cf-topic-err">Please choose a topic, so the right person reads this first.</p>
+              </div>
+
+              <fieldset class="contact-appt js-appt" hidden>
+                <legend>Your appointment</legend>
+                <div class="contact-form__row">
+                  <div class="field">
+                    <label for="cf-date">Preferred date</label>
+                    <input class="input" id="cf-date" name="date" type="date" aria-describedby="cf-date-err">
+                    <p class="error-msg" id="cf-date-err">Please choose a preferred date.</p>
+                  </div>
+                  <div class="field">
+                    <label for="cf-time">Preferred time</label>
+                    <select class="select" id="cf-time" name="time" aria-describedby="cf-time-err">
+                      <option value="" selected>Choose a slot…</option>
+                      <option value="11:00">11:00 am</option>
+                      <option value="12:00">12:00 noon</option>
+                      <option value="13:00">1:00 pm</option>
+                      <option value="14:00">2:00 pm</option>
+                      <option value="15:00">3:00 pm</option>
+                      <option value="16:00">4:00 pm</option>
+                      <option value="17:00">5:00 pm</option>
+                      <option value="18:00">6:00 pm</option>
+                      <option value="19:00">7:00 pm</option>
+                    </select>
+                    <p class="error-msg" id="cf-time-err">Please choose a time between 11:00 am and 7:00 pm.</p>
+                  </div>
+                </div>
+                <p class="contact-appt__note">Private viewings run about 45 minutes, one party at a time.
+                  We'll confirm your slot on WhatsApp — and Mondays, though the doors look shut, are kept
+                  free for appointments exactly like yours.</p>
+              </fieldset>
+
+              <div class="field">
+                <label for="cf-message">Your message</label>
+                <textarea class="textarea" id="cf-message" name="message"
+                          placeholder="A ring for a December proposal — she wears size 12 and loves rose gold…"
+                          aria-describedby="cf-message-err"></textarea>
+                <p class="error-msg" id="cf-message-err">Do tell us a little — even a line helps us help you.</p>
+              </div>
+
+              <div class="contact-consent">
+                <label class="checkbox-row" for="cf-consent">
+                  <input type="checkbox" id="cf-consent" name="consent">
+                  <span>Miró may contact me on WhatsApp
+                    <small>The fastest way to confirm appointments and see pieces on video.</small>
+                  </span>
+                </label>
+              </div>
+
+              <button class="btn btn--block contact-form__submit" type="submit">Send to the atelier</button>
+            </form>
+          </div>
+
+          <!-- ——— Success panel (swapped in after submit) ——— -->
+          <div class="contact-success js-success" role="status" tabindex="-1" hidden>
+            <p class="eyebrow eyebrow--teal">Received, with thanks</p>
+            <h2 class="contact-success__title h-serif-italic">Thank you, <span class="js-success-name">friend</span> —
+              your note is with the atelier.</h2>
+            <p class="contact-success__copy">We reply within 4 working hours — appointments are confirmed
+              on WhatsApp. If it truly cannot wait, the atelier line is open Tue–Sun, 11:00–19:30.</p>
+            <p class="contact-success__ref">Your reference · <strong class="js-success-ref">INQ-0000000000000</strong></p>
+            <p class="contact-success__hint">Keep it handy — quote it if you write again and we'll pick up
+              the same thread.</p>
+            <button class="btn--text contact-success__again js-reset" type="button">Ask another question
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="16" height="16" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
+
+          <!-- ——— Reassurance row ——— -->
+          <ul class="contact-assure reveal" role="list">
+            <li>Private viewings</li>
+            <li>No obligation</li>
+            <li>Chai on us</li>
+          </ul>
+          <p class="contact-faq-note reveal">Short on time? Many answers already live in our
+            <a href="faqs.html">FAQs</a> — sizing, shipping, returns and GST invoices among them.</p>
+        </div>
+
+        <!-- ——— Right: atelier card + stylised map ——— -->
+        <aside class="contact-aside" aria-label="Atelier details">
+          <div class="atelier-card reveal reveal--d1">
+            <figure class="atelier-card__media">
+              <img class="js-atelier-photo"
+                   alt="A Miró client wearing layered fine gold jewellery, photographed in soft afternoon light"
+                   loading="lazy" width="900" height="675">
+            </figure>
+            <div class="atelier-card__body">
+              <p class="eyebrow eyebrow--navy">Visit us</p>
+              <h2 class="atelier-card__name">The Kala Ghoda atelier</h2>
+              <p class="atelier-card__blurb">A converted printing press off Rampart Row — quiet, sunlit,
+                and stocked with every piece on the site plus a few that never make it online.</p>
+              <dl class="atelier-card__dl">
+                <div>
+                  <dt>Find us</dt>
+                  <dd><address>14 Ropewalk Lane, Kala Ghoda,<br>Mumbai 400 001</address></dd>
+                </div>
+                <div>
+                  <dt>Hours</dt>
+                  <dd>Tue–Sun 11:00–19:30<br>Mondays by appointment</dd>
+                </div>
+                <div>
+                  <dt>Call</dt>
+                  <dd><a href="tel:+912266001414">+91 22 6600 1414</a></dd>
+                </div>
+                <div>
+                  <dt>Write</dt>
+                  <dd><a href="mailto:care@mirojewelry.in">care@mirojewelry.in</a></dd>
+                </div>
+              </dl>
+              <a class="btn btn--block atelier-card__wa js-wa-link" href="https://wa.me/919820012345"
+                 target="_blank" rel="noopener">
+                <span class="atelier-card__wa-icon js-wa-icon" aria-hidden="true"></span>WhatsApp the atelier
+              </a>
+              <p class="atelier-card__ig">
+                <a class="btn--text" href="https://instagram.com/miro.finejewelry" target="_blank" rel="noopener">@miro.finejewelry</a>
+              </p>
+            </div>
+          </div>
+
+          <div class="map-art reveal reveal--d2">
+            <div class="map-art__scene" aria-hidden="true">
+              <div class="map-art__water"></div>
+              <div class="map-art__park"></div>
+              <div class="map-art__streets"></div>
+              <div class="map-art__block map-art__block--a"></div>
+              <div class="map-art__block map-art__block--b"></div>
+              <div class="map-art__block map-art__block--c"></div>
+              <span class="map-art__north">↑ N</span>
+              <span class="map-art__pin js-map-pin"></span>
+            </div>
+            <p class="map-art__caption">Kala Ghoda, Fort, Mumbai</p>
+          </div>
+          <p class="contact-map-note h-serif-italic reveal reveal--d3">A stylised view, not a live map —
+            message us on WhatsApp and we'll walk you in from Rampart Row.</p>
+        </aside>
+
+      </div>
+    </section>
+
+  </main>
+
+  <div id="site-chrome-bottom"></div>
+  <script src="assets/js/store.js"></script>
+  <script src="assets/js/layout.js"></script>
+  <script src="assets/js/contact.js"></script>
+</body>
+</html>

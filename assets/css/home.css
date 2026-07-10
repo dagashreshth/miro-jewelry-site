@@ -1,0 +1,183 @@
+/* ============================================================
+   Miró — Home page styles (mobile-first)
+   ============================================================ */
+
+/* ---------- Section heads ---------- */
+.section-head { margin-bottom: clamp(28px, 5vw, 48px); }
+.section-head .eyebrow { margin-bottom: 12px; }
+.section-head p:not(.eyebrow) { margin-top: 12px; }
+.section-head--row {
+  display: flex; flex-wrap: wrap; align-items: flex-end;
+  justify-content: space-between; gap: 16px;
+}
+
+/* ---------- Hero ---------- */
+.hero {
+  position: relative;
+  min-height: 86svh;
+  display: flex; align-items: flex-end;
+  overflow: hidden;
+  background: var(--navy);
+}
+.hero__media, .hero__media img {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; object-position: 62% 30%;
+}
+.hero__veil {
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(180deg, rgba(12,31,66,0.10) 0%, rgba(12,31,66,0.06) 45%, rgba(12,31,66,0.66) 100%);
+}
+.hero__content {
+  position: relative; z-index: 2;
+  padding-block: clamp(48px, 8vw, 96px);
+  text-align: center;
+}
+/* --teal-text is tuned for light backgrounds; on the dark hero use the light tint */
+.hero__content .eyebrow { color: var(--teal-tint); }
+.hero__title { color: var(--paper); }
+.hero__title em { color: var(--cream); }
+.hero__sub {
+  color: rgba(250, 247, 241, 0.88);
+  max-width: 46ch; margin: 18px auto 0;
+}
+.hero__ctas {
+  display: flex; flex-direction: column; gap: 12px;
+  margin-top: 30px;
+}
+@media (min-width: 600px) {
+  .hero__ctas { flex-direction: row; justify-content: center; }
+}
+@media (min-width: 900px) {
+  .hero { min-height: 92svh; }
+  .hero__content { text-align: left; padding-bottom: 110px; }
+  .hero__sub { margin-inline: 0; }
+  .hero__ctas { justify-content: flex-start; }
+  .hero__media img { object-position: 55% 25%; }
+}
+
+/* ---------- Featured collections ---------- */
+.collection-grid { gap: 16px; }
+.ccard {
+  position: relative; display: block;
+  border-radius: var(--radius-lg); overflow: hidden;
+  aspect-ratio: 3 / 4;
+  background: var(--navy);
+}
+.ccard img {
+  width: 100%; height: 100%; object-fit: cover;
+  transition: transform 0.7s var(--ease), opacity 0.5s var(--ease);
+  opacity: 0.94;
+}
+.ccard:hover img, .ccard:focus-visible img { transform: scale(1.05); opacity: 1; }
+.ccard__veil {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(12,31,66,0) 38%, rgba(12,31,66,0.72) 100%);
+}
+.ccard__body {
+  position: absolute; inset-inline: 0; bottom: 0; z-index: 2;
+  padding: 22px 22px 24px;
+  color: var(--paper);
+  /* children are <span>s for inline semantics; flex column stacks them
+     as if they were block-level without changing the markup */
+  display: flex; flex-direction: column;
+}
+.ccard__kicker {
+  font-size: 10.5px; font-weight: 700; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--cream); opacity: 0.85;
+}
+.ccard__name {
+  font-family: var(--font-title); font-weight: 500; color: var(--paper);
+  font-size: clamp(22px, 2.6vw, 28px); line-height: 1.2;
+  margin-top: 8px;
+}
+.ccard__tag { font-size: 14px; line-height: 1.5; color: rgba(250,247,241,0.82); margin-top: 8px; max-width: 34ch; }
+.ccard__cta {
+  align-self: flex-start;
+  display: inline-flex; align-items: center; gap: 8px;
+  margin-top: 16px; min-height: 44px;
+  font-size: 11.5px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--cream); border-bottom: 1px solid rgba(232,221,207,0.6);
+  transition: gap 0.25s var(--ease);
+}
+.ccard:hover .ccard__cta { gap: 13px; }
+@media (min-width: 900px) {
+  .collection-grid { gap: 24px; }
+}
+
+/* ---------- Bestsellers rail ---------- */
+.rail {
+  display: grid; grid-auto-flow: column; grid-auto-columns: 72%;
+  gap: 16px; overflow-x: auto; padding-bottom: 10px;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.rail::-webkit-scrollbar { display: none; }
+.rail .pcard { scroll-snap-align: start; }
+@media (min-width: 600px) { .rail { grid-auto-columns: 42%; } }
+@media (min-width: 900px) {
+  .rail { grid-auto-flow: row; grid-template-columns: repeat(4, 1fr); gap: 28px; overflow: visible; }
+}
+
+/* ---------- About ---------- */
+.about__grid { display: grid; gap: 36px; align-items: center; }
+.about__media { position: relative; }
+.about__media img {
+  width: 100%; border-radius: var(--radius-lg);
+  aspect-ratio: 4 / 5; object-fit: cover;
+  box-shadow: var(--shadow-soft);
+}
+.about__caption {
+  margin-top: 12px; font-size: 15px; color: var(--ink-soft);
+}
+.about__copy h2 { margin-top: 10px; margin-bottom: 20px; }
+.about__facts {
+  display: flex; flex-wrap: wrap; gap: 14px 36px;
+  margin-top: 28px; padding-top: 24px;
+  border-top: 1px solid var(--line);
+}
+.about__facts li { display: flex; flex-direction: column; }
+.about__facts strong {
+  font-family: var(--font-title); font-size: 26px; font-weight: 500; color: var(--raspberry);
+}
+.about__facts span { font-size: 13px; color: var(--ink-soft); letter-spacing: 0.04em; }
+@media (min-width: 900px) {
+  .about__grid { grid-template-columns: 1fr 1fr; gap: 72px; }
+}
+
+/* ---------- Promises (navy band) ---------- */
+.promises { padding-block: clamp(56px, 8vw, 96px); }
+.promises__list { display: grid; gap: 32px; }
+.promises__list h3 { font-size: 21px; color: var(--cream); }
+.promises__list p { margin-top: 8px; font-size: 14.5px; }
+@media (min-width: 600px) { .promises__list { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1100px) { .promises__list { grid-template-columns: repeat(4, 1fr); gap: 40px; } }
+
+/* ---------- Instagram gallery ---------- */
+.insta {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;
+}
+.insta a {
+  position: relative; display: block; overflow: hidden;
+  aspect-ratio: 1; border-radius: var(--radius);
+  background: var(--cream-soft);
+}
+.insta img {
+  width: 100%; height: 100%; object-fit: cover;
+  transition: transform 0.6s var(--ease);
+}
+.insta a:hover img, .insta a:focus-visible img { transform: scale(1.06); }
+.insta__veil {
+  position: absolute; inset: 0; z-index: 2;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(12, 31, 66, 0);
+  color: transparent;
+  transition: background 0.3s var(--ease), color 0.3s var(--ease);
+}
+.insta a:hover .insta__veil, .insta a:focus-visible .insta__veil {
+  background: rgba(12, 31, 66, 0.45); color: var(--paper);
+}
+.insta__veil svg { width: 26px; height: 26px; }
+@media (min-width: 700px) { .insta { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 1100px) { .insta { grid-template-columns: repeat(6, 1fr); } }

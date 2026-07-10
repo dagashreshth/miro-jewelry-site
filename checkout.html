@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Secure Checkout — Miró Fine Jewelry</title>
+  <meta name="description" content="Complete your Miró order on one secure page — UPI, cards, netbanking and EMI via Razorpay, GST invoicing and insured doorstep delivery across India.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Mulish:wght@300;400;500;600;700&family=Monsieur+La+Doulaise&display=swap" rel="stylesheet">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='48' fill='%23bf2563'/%3E%3Ctext x='50' y='68' font-size='58' text-anchor='middle' fill='%23e8ddcf' font-family='Georgia,serif' font-style='italic'%3EM%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="assets/css/main.css">
+  <link rel="stylesheet" href="assets/css/checkout.css">
+  <script src="assets/js/analytics.js"></script>
+</head>
+<body data-page="checkout">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div id="site-chrome-top"></div>
+
+  <main id="main">
+
+    <!-- ============ Page hero (calm cream strip) ============ -->
+    <section class="page-hero page-hero--checkout" aria-labelledby="checkout-title">
+      <div class="container">
+        <p class="eyebrow eyebrow--navy reveal">Almost hers</p>
+        <h1 id="checkout-title" class="reveal reveal--d1">Checkout</h1>
+        <p class="secure-line reveal reveal--d2">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="15" height="15" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="1.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3" stroke-linecap="round"/></svg>
+          256-bit encrypted · PCI-DSS compliant via Razorpay
+        </p>
+      </div>
+    </section>
+
+    <!-- ============ Empty-bag guard ============ -->
+    <section class="section checkout-empty js-empty" hidden aria-label="Your bag is empty">
+      <div class="container container--narrow text-center">
+        <p class="h-serif-italic checkout-empty__script reveal">Nothing here yet…</p>
+        <h2 class="mt-3 reveal reveal--d1">Your bag is empty</h2>
+        <p class="checkout-empty__copy reveal reveal--d2">Checkout is where a Miró piece changes hands — but first, one has to
+          catch your eye. Begin with the bestsellers, or wander the three collections until something refuses
+          to be left behind.</p>
+        <div class="checkout-empty__ctas reveal reveal--d3">
+          <a class="btn" href="collections.html">Explore the collections</a>
+          <a class="btn--text" href="index.html">Return to the maison
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="16" height="16" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ Checkout ============ -->
+    <div class="section section--tight checkout js-checkout">
+      <div class="container">
+
+        <!-- Mobile: collapsible order summary -->
+        <details class="summary-mobile js-summary-details">
+          <summary class="summary-mobile__bar">
+            <span class="summary-mobile__label">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="18" height="18" aria-hidden="true"><path d="M6 8h12l-1 12.5a1.5 1.5 0 0 1-1.5 1.5h-7A1.5 1.5 0 0 1 7 20.5L6 8Z"/><path d="M9 10V6a3 3 0 0 1 6 0v4" stroke-linecap="round"/></svg>
+              Order summary
+            </span>
+            <span class="summary-mobile__amount js-sum-mini">₹0</span>
+            <svg class="summary-mobile__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="16" height="16" aria-hidden="true"><path d="m6 9 6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </summary>
+          <div class="summary-mobile__body js-summary-mobile"></div>
+        </details>
+
+        <div class="checkout__grid">
+
+          <!-- ============ Left: the one-page form ============ -->
+          <form class="checkout__form" id="checkout-form" novalidate>
+
+            <!-- Section 1 · Contact -->
+            <section class="fsection" aria-labelledby="s1-title">
+              <header class="fsection__head">
+                <span class="fsection__num" aria-hidden="true">1</span>
+                <div>
+                  <h2 class="fsection__title" id="s1-title">Contact</h2>
+                  <p class="fsection__sub">Where we send your invoice, certificates and delivery updates.</p>
+                </div>
+              </header>
+              <div class="fgrid">
+                <div class="field">
+                  <label for="co-email">Email address</label>
+                  <input class="input" type="email" id="co-email" name="email" autocomplete="email"
+                         placeholder="you@example.com" required>
+                  <p class="error-msg" id="co-email-err">Please enter a valid email address — your tax invoice and IGI certificates arrive here.</p>
+                </div>
+                <div class="field">
+                  <label for="co-phone">Mobile number</label>
+                  <div class="phone-wrap">
+                    <span class="phone-wrap__code" aria-hidden="true">+91</span>
+                    <input class="input" type="tel" id="co-phone" name="phone" autocomplete="tel-national"
+                           inputmode="numeric" maxlength="10" placeholder="98200 12345" required>
+                  </div>
+                  <p class="error-msg" id="co-phone-err">Please enter a 10-digit Indian mobile number (starting 6–9).</p>
+                </div>
+                <label class="checkbox-row">
+                  <input type="checkbox" id="co-whatsapp" name="whatsapp" checked>
+                  <span>Send my order updates on WhatsApp — dispatch, hallmark verification and doorstep timing, no marketing.</span>
+                </label>
+              </div>
+            </section>
+
+            <!-- Section 2 · Shipping address -->
+            <section class="fsection" aria-labelledby="s2-title">
+              <header class="fsection__head">
+                <span class="fsection__num" aria-hidden="true">2</span>
+                <div>
+                  <h2 class="fsection__title" id="s2-title">Shipping address</h2>
+                  <p class="fsection__sub">Every parcel travels fully insured, with signature on delivery.</p>
+                </div>
+              </header>
+              <div class="fgrid">
+                <div class="field">
+                  <label for="sh-name">Full name</label>
+                  <input class="input" type="text" id="sh-name" name="fullName" autocomplete="name"
+                         placeholder="As it should read on the courier slip" required>
+                  <p class="error-msg" id="sh-name-err">Please tell us who signs for the parcel.</p>
+                </div>
+                <div class="field">
+                  <label for="sh-addr1">Flat / house no., building &amp; street</label>
+                  <input class="input" type="text" id="sh-addr1" name="address1" autocomplete="address-line1"
+                         placeholder="e.g. 402, Sea Breeze, Carter Road" required>
+                  <p class="error-msg" id="sh-addr1-err">Please enter your street address.</p>
+                </div>
+                <div class="field">
+                  <label for="sh-addr2">Area &amp; landmark <span class="label-opt">(optional)</span></label>
+                  <input class="input" type="text" id="sh-addr2" name="address2" autocomplete="address-line2"
+                         placeholder="e.g. Bandra West, opposite Mount Mary steps">
+                </div>
+                <div class="fgrid fgrid--2">
+                  <div class="field">
+                    <label for="sh-city">City</label>
+                    <input class="input" type="text" id="sh-city" name="city" autocomplete="address-level2"
+                           placeholder="e.g. Mumbai" required>
+                    <p class="error-msg" id="sh-city-err">Please enter your city.</p>
+                  </div>
+                  <div class="field">
+                    <label for="sh-state">State / union territory</label>
+                    <select class="select" id="sh-state" name="state" autocomplete="address-level1" required>
+                      <option value="">Select state / UT</option>
+                      <optgroup label="States">
+                        <option>Andhra Pradesh</option><option>Arunachal Pradesh</option><option>Assam</option>
+                        <option>Bihar</option><option>Chhattisgarh</option><option>Goa</option>
+                        <option>Gujarat</option><option>Haryana</option><option>Himachal Pradesh</option>
+                        <option>Jharkhand</option><option>Karnataka</option><option>Kerala</option>
+                        <option>Madhya Pradesh</option><option>Maharashtra</option><option>Manipur</option>
+                        <option>Meghalaya</option><option>Mizoram</option><option>Nagaland</option>
+                        <option>Odisha</option><option>Punjab</option><option>Rajasthan</option>
+                        <option>Sikkim</option><option>Tamil Nadu</option><option>Telangana</option>
+                        <option>Tripura</option><option>Uttar Pradesh</option><option>Uttarakhand</option>
+                        <option>West Bengal</option>
+                      </optgroup>
+                      <optgroup label="Union territories">
+                        <option>Andaman and Nicobar Islands</option><option>Chandigarh</option>
+                        <option>Dadra and Nagar Haveli and Daman and Diu</option><option>Delhi</option>
+                        <option>Jammu and Kashmir</option><option>Ladakh</option>
+                        <option>Lakshadweep</option><option>Puducherry</option>
+                      </optgroup>
+                    </select>
+                    <p class="error-msg" id="sh-state-err">Please choose your state or union territory.</p>
+                  </div>
+                </div>
+                <div class="fgrid fgrid--2">
+                  <div class="field">
+                    <label for="sh-pincode">Pincode</label>
+                    <input class="input" type="text" id="sh-pincode" name="pincode" autocomplete="postal-code"
+                           inputmode="numeric" maxlength="6" placeholder="6-digit pincode" required>
+                    <p class="error-msg" id="sh-pincode-err">Please enter a valid 6-digit pincode.</p>
+                    <p class="delivery-note js-delivery" aria-live="polite"></p>
+                  </div>
+                  <div class="field">
+                    <label for="sh-country">Country</label>
+                    <input class="input input--fixed" type="text" id="sh-country" name="country" value="India" readonly>
+                    <p class="hint">We currently deliver within India only — write to us for international enquiries.</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- Section 3 · GST invoice -->
+            <section class="fsection" aria-labelledby="s3-title">
+              <header class="fsection__head">
+                <span class="fsection__num" aria-hidden="true">3</span>
+                <div>
+                  <h2 class="fsection__title" id="s3-title">GST invoice</h2>
+                  <p class="fsection__sub">A tax invoice accompanies every order. Add your GSTIN only if your business claims input credit.</p>
+                </div>
+              </header>
+              <label class="checkbox-row gst-toggle">
+                <input type="checkbox" id="gst-check" class="js-gst-toggle" aria-expanded="false" aria-controls="gst-fields">
+                <span>I need a GST invoice for my business</span>
+              </label>
+              <div class="fgrid gst-fields" id="gst-fields" hidden>
+                <div class="field">
+                  <label for="gst-in">GSTIN</label>
+                  <input class="input input--caps" type="text" id="gst-in" name="gstin" maxlength="15"
+                         autocomplete="off" spellcheck="false" placeholder="e.g. 27ABCDE1234F1Z5">
+                  <p class="hint">15 characters — state code, PAN, entity number.</p>
+                  <p class="error-msg" id="gst-in-err">That doesn't look like a valid GSTIN — please check the 15-character format (e.g. 27ABCDE1234F1Z5).</p>
+                </div>
+                <div class="field">
+                  <label for="gst-name">Registered business name</label>
+                  <input class="input" type="text" id="gst-name" name="businessName" autocomplete="organization"
+                         placeholder="Exactly as registered with GST">
+                  <p class="error-msg" id="gst-name-err">Please enter the registered business name for the invoice.</p>
+                </div>
+              </div>
+            </section>
+
+            <!-- Section 4 · Payment -->
+            <section class="fsection" aria-labelledby="s4-title">
+              <header class="fsection__head">
+                <span class="fsection__num" aria-hidden="true">4</span>
+                <div>
+                  <h2 class="fsection__title" id="s4-title">Payment</h2>
+                  <p class="fsection__sub">Choose how you'd like to pay — you'll confirm on Razorpay's secure layer.</p>
+                </div>
+              </header>
+              <fieldset class="paycards">
+                <legend class="sr-only">Payment method</legend>
+                <label class="paycard is-selected js-paycard">
+                  <input type="radio" name="payment" value="upi" checked>
+                  <span class="paycard__text">
+                    <span class="paycard__name">UPI</span>
+                    <span class="paycard__hint">Pay in seconds from GPay, PhonePe, Paytm or any UPI app — no fees.</span>
+                  </span>
+                </label>
+                <label class="paycard js-paycard">
+                  <input type="radio" name="payment" value="card">
+                  <span class="paycard__text">
+                    <span class="paycard__name">Credit / debit card</span>
+                    <span class="paycard__hint">Visa, Mastercard, RuPay and Amex — tokenised, never stored by us.</span>
+                  </span>
+                </label>
+                <div class="card-demo js-card-demo" hidden>
+                  <div class="fgrid">
+                    <div class="field">
+                      <label for="pay-cardno">Card number</label>
+                      <input class="input" type="text" id="pay-cardno" placeholder="•••• •••• •••• 4242" disabled>
+                    </div>
+                    <div class="fgrid fgrid--2">
+                      <div class="field">
+                        <label for="pay-exp">Expiry</label>
+                        <input class="input" type="text" id="pay-exp" placeholder="MM / YY" disabled>
+                      </div>
+                      <div class="field">
+                        <label for="pay-cvv">CVV</label>
+                        <input class="input" type="text" id="pay-cvv" placeholder="•••" disabled>
+                      </div>
+                    </div>
+                  </div>
+                  <p class="card-demo__note">Demo build — card fields activate with live Razorpay keys.</p>
+                </div>
+                <label class="paycard js-paycard">
+                  <input type="radio" name="payment" value="netbanking">
+                  <span class="paycard__text">
+                    <span class="paycard__name">Netbanking</span>
+                    <span class="paycard__hint">All major Indian banks — redirected securely and back in seconds.</span>
+                  </span>
+                </label>
+                <label class="paycard js-paycard">
+                  <input type="radio" name="payment" value="emi">
+                  <span class="paycard__text">
+                    <span class="paycard__name">EMI · 3–12 months</span>
+                    <span class="paycard__hint">Split your purchase across 3, 6, 9 or 12 months on major credit cards.</span>
+                  </span>
+                </label>
+              </fieldset>
+              <p class="razorpay-strip">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="16" height="16" aria-hidden="true"><path d="M12 3 5 6v5c0 4.4 3 8.4 7 9.7 4-1.3 7-5.3 7-9.7V6l-7-3Z"/><path d="m9.2 12 2 2 3.8-4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Secured by <strong>Razorpay</strong> — India's most trusted payment gateway
+              </p>
+            </section>
+
+            <button class="btn btn--lg btn--block pay-btn" type="submit">
+              Pay <span class="js-pay-amount">₹0</span> securely
+            </button>
+            <p class="pay-legal">By placing this order you accept our 15-day return policy and lifetime-care
+              terms — see <a href="faqs.html">FAQs</a>. Your details are used only to craft, insure and deliver
+              this order.</p>
+          </form>
+
+          <!-- ============ Right: sticky order summary (desktop) ============ -->
+          <aside class="checkout__aside" aria-label="Order summary">
+            <div class="summary-card">
+              <h2 class="summary-card__title">Order summary</h2>
+              <div class="js-summary-desktop"></div>
+              <p class="summary-card__edit"><a href="cart.html">Edit bag</a></p>
+            </div>
+          </aside>
+
+        </div>
+
+        <!-- Trust footer row -->
+        <ul class="trust-row" role="list">
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 3 5 6v5c0 4.4 3 8.4 7 9.7 4-1.3 7-5.3 7-9.7V6l-7-3Z"/><path d="m9.2 12 2 2 3.8-4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            BIS-hallmarked gold
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 3 3 9l9 12L21 9l-9-6Z"/><path d="M3 9h18M9 9l3 12M15 9l-3 12" stroke-linejoin="round"/></svg>
+            IGI-certified diamonds
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 7h11v8H3zM14 10h4l3 3v2h-7z"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/></svg>
+            Insured doorstep delivery
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 9a8 8 0 1 1 2.3 6.3" stroke-linecap="round"/><path d="M4 4v5h5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            15-day easy returns
+          </li>
+        </ul>
+
+      </div>
+    </div>
+
+  </main>
+
+  <div id="site-chrome-bottom"></div>
+
+  <!-- ============ Processing overlay ============ -->
+  <div class="pay-overlay js-pay-overlay" role="alertdialog" aria-modal="true" aria-label="Processing payment" hidden>
+    <div class="pay-overlay__inner" aria-live="assertive">
+      <span class="logo-script pay-overlay__logo" aria-hidden="true">Miró</span>
+      <p class="pay-overlay__status">Contacting Razorpay…</p>
+      <p class="pay-overlay__note">Do not refresh or close this window.</p>
+    </div>
+  </div>
+
+  <script src="assets/js/store.js"></script>
+  <script src="assets/js/layout.js"></script>
+  <script src="assets/js/checkout.js"></script>
+</body>
+</html>

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>All Jewellery — Miró Fine Jewelry</title>
+  <meta name="description" content="The complete Miró catalogue — BIS-hallmarked rings, earrings, necklaces and bracelets set with certified stones. Search the house, filter by price and category, and sort the collection; every price includes GST.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Mulish:wght@300;400;500;600;700&family=Monsieur+La+Doulaise&display=swap" rel="stylesheet">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='48' fill='%23bf2563'/%3E%3Ctext x='50' y='68' font-size='58' text-anchor='middle' fill='%23e8ddcf' font-family='Georgia,serif' font-style='italic'%3EM%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="assets/css/main.css">
+  <link rel="stylesheet" href="assets/css/collections.css">
+  <script src="assets/js/analytics.js"></script>
+</head>
+<body data-page="collections">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div id="site-chrome-top"></div>
+
+  <main id="main">
+
+    <!-- ============ Listing hero ============ -->
+    <section class="page-hero lhero" aria-labelledby="listing-title">
+      <div class="container">
+        <nav class="crumbs lhero__crumbs" aria-label="Breadcrumb">
+          <a href="index.html">Home</a>
+          <span aria-hidden="true">/</span>
+          <span class="current js-crumb-current">All jewellery</span>
+        </nav>
+        <p class="eyebrow js-hero-eyebrow reveal">The collection</p>
+        <h1 id="listing-title" class="js-hero-title reveal reveal--d1">All jewellery</h1>
+        <p class="lede js-hero-lede reveal reveal--d2">Every piece of the house in one room — hallmarked
+          gold, certified stones, and silhouettes made to be worn daily, then handed down.</p>
+        <figure class="lhero__banner js-hero-banner reveal" hidden>
+          <img class="js-hero-banner-img" alt="" width="1600" height="600">
+        </figure>
+      </div>
+    </section>
+
+    <!-- ============ Sticky toolbar: search · category · price · sort ============ -->
+    <div class="ltoolbar" role="region" aria-label="Search, filter and sort the collection">
+      <div class="container ltoolbar__inner">
+
+        <div class="lsearch">
+          <label class="sr-only" for="flt-q">Search the collection</label>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.8-3.8" stroke-linecap="round"/></svg>
+          <input class="input lsearch__input js-q" id="flt-q" type="search"
+                 placeholder="Search the collection…" autocomplete="off"
+                 spellcheck="false">
+        </div>
+
+        <div class="ltoolbar__pills" role="group" aria-label="Filter by category">
+          <button class="chip" type="button" data-cat="all" aria-pressed="true">All</button>
+          <button class="chip" type="button" data-cat="rings" aria-pressed="false">Rings</button>
+          <button class="chip" type="button" data-cat="earrings" aria-pressed="false">Earrings</button>
+          <button class="chip" type="button" data-cat="necklaces" aria-pressed="false">Necklaces</button>
+          <button class="chip" type="button" data-cat="bracelets" aria-pressed="false">Bracelets</button>
+        </div>
+
+        <div class="ltoolbar__price">
+          <button class="chip lprice-toggle js-price-toggle" type="button"
+                  aria-expanded="false" aria-haspopup="true" aria-label="Filter by price">
+            Price
+            <span class="fcount js-price-n" hidden>0</span>
+            <svg class="lchev" viewBox="0 0 12 8" width="11" height="7" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M1 1l5 5 5-5" stroke-linecap="round"/></svg>
+          </button>
+          <div class="pricepop js-pricepop" hidden>
+            <p class="pricepop__hint">Tick any ranges — every price includes GST</p>
+            <div class="js-price-rows-pop"></div>
+            <div class="pricepop__foot">
+              <button class="pricepop__btn js-pop-clear" type="button">Clear</button>
+              <button class="pricepop__btn pricepop__btn--strong js-pop-done" type="button">Done</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="ltoolbar__sortwrap">
+          <label class="sr-only" for="flt-sort">Sort by</label>
+          <select class="select ltoolbar__select js-sort" id="flt-sort">
+            <option value="featured">Featured</option>
+            <option value="price-asc">Price: low to high</option>
+            <option value="price-desc">Price: high to low</option>
+            <option value="new">Newest first</option>
+          </select>
+        </div>
+
+        <button class="lfilter-btn js-sheet-open" type="button"
+                aria-expanded="false" aria-controls="filter-sheet">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 8h4M12 8h8M4 16h8M16 16h4" stroke-linecap="round"/><circle cx="10" cy="8" r="2.2"/><circle cx="14" cy="16" r="2.2"/></svg>
+          Filter &amp; sort
+          <span class="fcount js-fcount" aria-hidden="true" hidden>0</span>
+          <span class="sr-only js-fcount-sr"></span>
+        </button>
+
+      </div>
+    </div>
+
+    <!-- ============ Results: count, active chips, product grid ============ -->
+    <section class="lresults" aria-labelledby="pieces-title">
+      <div class="container">
+        <h2 class="sr-only" id="pieces-title">The pieces</h2>
+        <div class="lmeta">
+          <p class="lcount js-count" aria-live="polite"></p>
+          <div class="lchips js-chips"></div>
+        </div>
+        <div class="plist js-grid"></div>
+        <div class="lempty js-empty" hidden>
+          <p class="h-serif-italic">Nothing answers to that — yet.</p>
+          <p>Loosen a filter or two, or tell our concierge what you're hunting for on
+            <a class="lempty__wa js-empty-wa" href="contact.html">WhatsApp</a> — the finding
+            is rather our favourite part.</p>
+          <button class="btn btn--outline js-clear-all" type="button">Clear all filters</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ Cross-links: the three collections ============ -->
+    <section class="section section--cream xband" aria-labelledby="xband-title">
+      <div class="container">
+        <div class="xband__head reveal">
+          <p class="eyebrow">Rooms of the house</p>
+          <h2 id="xband-title">Wander by collection</h2>
+          <p class="measure">Three rooms, three tempos — the same unhurried hands behind every piece.</p>
+        </div>
+        <div class="xgrid js-xlinks reveal reveal--d1"></div>
+      </div>
+    </section>
+
+    <!-- ============ Mobile filter & sort bottom sheet ============ -->
+    <div class="fsheet js-sheet" id="filter-sheet" aria-hidden="true">
+      <div class="fsheet__scrim js-sheet-close"></div>
+      <div class="fsheet__panel" role="dialog" aria-modal="true" aria-label="Filter and sort">
+        <div class="fsheet__head">
+          <p class="fsheet__title">Filter &amp; sort</p>
+          <button class="icon-btn js-sheet-close js-sheet-x" type="button" aria-label="Close filter panel">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+        <div class="fsheet__body">
+          <div class="fgroup" role="group" aria-labelledby="fg-cat">
+            <p class="eyebrow eyebrow--navy fgroup__label" id="fg-cat">Category</p>
+            <div class="chips">
+              <button class="chip" type="button" data-cat="all" aria-pressed="true">All</button>
+              <button class="chip" type="button" data-cat="rings" aria-pressed="false">Rings</button>
+              <button class="chip" type="button" data-cat="earrings" aria-pressed="false">Earrings</button>
+              <button class="chip" type="button" data-cat="necklaces" aria-pressed="false">Necklaces</button>
+              <button class="chip" type="button" data-cat="bracelets" aria-pressed="false">Bracelets</button>
+            </div>
+          </div>
+          <div class="fgroup" role="group" aria-labelledby="fg-price">
+            <p class="eyebrow eyebrow--navy fgroup__label" id="fg-price">Price</p>
+            <div class="js-price-rows-sheet"></div>
+          </div>
+          <fieldset class="fgroup fgroup--sort">
+            <legend class="eyebrow eyebrow--navy fgroup__label">Sort by</legend>
+            <label class="prow">
+              <input type="radio" name="fsort" data-sortopt="featured" checked>
+              <span class="prow__label">Featured</span>
+            </label>
+            <label class="prow">
+              <input type="radio" name="fsort" data-sortopt="price-asc">
+              <span class="prow__label">Price: low to high</span>
+            </label>
+            <label class="prow">
+              <input type="radio" name="fsort" data-sortopt="price-desc">
+              <span class="prow__label">Price: high to low</span>
+            </label>
+            <label class="prow">
+              <input type="radio" name="fsort" data-sortopt="new">
+              <span class="prow__label">Newest first</span>
+            </label>
+          </fieldset>
+        </div>
+        <div class="fsheet__foot">
+          <button class="btn btn--block js-sheet-apply" type="button">Show all pieces</button>
+          <button class="btn--text fsheet__clear js-clear-all" type="button">Clear all</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <div id="site-chrome-bottom"></div>
+  <script src="assets/js/store.js"></script>
+  <script src="assets/js/layout.js"></script>
+  <script src="assets/js/collections.js"></script>
+</body>
+</html>
