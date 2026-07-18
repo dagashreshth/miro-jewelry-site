@@ -7,10 +7,8 @@
   "use strict";
 
   var DEFAULT_ID = "aurelia-halo";
-  var ENGRAVE_MAX = 15;
   var SIZE_GUIDE = [[6, "15.3"], [8, "15.9"], [10, "16.5"], [12, "17.2"], [14, "17.8"], [16, "18.5"], [18, "19.2"]];
   var ALT_SUFFIX = [" — full view", " — close detail of the setting", " — worn, styled in daylight"];
-  var PREVIEW_PLACEHOLDER = "Your words, in our hand";
 
   var pdpWrap = document.querySelector(".js-pdp");
   var crumbsWrap = document.querySelector(".js-crumbs");
@@ -40,7 +38,7 @@
         "The full collection is only a step away — and if you remember a piece you saw here once, our concierge " +
         "can usually trace it by name or stone.</p>" +
         '<div class="pdp-notfound__ctas">' +
-          '<a class="btn btn--lg" href="collections.html">Browse all jewellery</a>' +
+          '<a class="btn btn--lg" href="collections.html">Browse all jewelry</a>' +
           '<a class="btn btn--lg btn--outline" href="contact.html">Ask the concierge</a>' +
         "</div>" +
       "</div>";
@@ -112,6 +110,7 @@
         "</button>"
       );
     }).join("");
+    /* Client feedback: main image with thumbnails below, soft shadow, no hint caption */
     return (
       '<div class="pdp-gallery">' +
         '<figure class="pdp-stage js-stage" id="pdp-stage" aria-label="Selected product image">' +
@@ -120,11 +119,11 @@
           '<div class="pdp-zoom js-zoom" aria-hidden="true"></div>' +
         "</figure>" +
         '<div class="pdp-thumbs" role="group" aria-label="Choose a view">' + thumbs + "</div>" +
-        '<p class="pdp-zoom-hint js-zoom-hint"></p>' +
       "</div>"
     );
   }
 
+  /* Client feedback: no GST/shipping note under the price */
   function priceHTML() {
     return (
       '<div class="pdp-price">' +
@@ -133,20 +132,18 @@
           ? '<s class="pdp-price__was">' + Miro.fmt(product.compareAt) + "</s>" +
             '<span class="badge badge--sale">Sale</span>'
           : "") +
-      "</div>" +
-      '<p class="pdp-price__note">Inclusive of 3% GST · Complimentary insured shipping over ' +
-        Miro.fmt(Miro.FREE_SHIP_THRESHOLD) + "</p>"
+      "</div>"
     );
   }
 
+  /* Client feedback ("Sample product details"): plain carat-weight lines
+     in place of the boxed spec table */
   function specsHTML() {
     return (
-      '<dl class="pdp-specs">' +
-        '<div class="pdp-specs__row"><dt>Stone</dt><dd>' + product.stone.type + "</dd></div>" +
-        '<div class="pdp-specs__row"><dt>Carat weight</dt><dd>' + product.stone.ctw + "</dd></div>" +
-        '<div class="pdp-specs__row"><dt>Metal weight</dt><dd><span class="js-karat">' + state.karat +
-          " gold</span> · " + product.metalWeight + "</dd></div>" +
-      "</dl>"
+      '<div class="pdp-carats">' +
+        "<p>" + product.stone.type + "</p>" +
+        "<p>Total carat weight " + product.stone.ctw + "</p>" +
+      "</div>"
     );
   }
 
@@ -201,43 +198,8 @@
     );
   }
 
-  function customHTML() {
-    return (
-      '<div class="pdp-custom">' +
-        '<div class="field">' +
-          '<label for="engrave-input">Engraving <em>· optional, complimentary</em></label>' +
-          '<input class="input" id="engrave-input" type="text" maxlength="' + ENGRAVE_MAX + '"' +
-            ' autocomplete="off" spellcheck="false" placeholder="Initials, a date, a word">' +
-          '<p class="hint js-engrave-count" aria-live="polite">' + ENGRAVE_MAX + " characters remaining</p>" +
-        "</div>" +
-        '<p class="pdp-engrave-preview" aria-hidden="true"><span class="js-engrave-preview">' + PREVIEW_PLACEHOLDER + "</span></p>" +
-        '<label class="checkbox-row">' +
-          '<input type="checkbox" class="js-giftwrap">' +
-          "<span>Signature Miró gift box + handwritten note — complimentary</span>" +
-        "</label>" +
-      "</div>"
-    );
-  }
-
-  function deliveryHTML() {
-    return (
-      '<div class="pdp-delivery">' +
-        '<label class="pdp-opt__label" for="pin-input">Delivery estimate</label>' +
-        '<div class="pdp-delivery__row">' +
-          '<input class="input" id="pin-input" type="text" inputmode="numeric" maxlength="6"' +
-            ' autocomplete="postal-code" placeholder="6-digit pincode">' +
-          '<button class="btn btn--outline pdp-delivery__check js-check-pin" type="button">Check</button>' +
-        "</div>" +
-        '<p class="pdp-delivery__result js-pin-result" aria-live="polite"></p>' +
-        '<ul class="pdp-assure" role="list">' +
-          "<li>Insured shipping</li>" +
-          "<li>BIS hallmark</li>" +
-          "<li>15-day returns</li>" +
-        "</ul>" +
-      "</div>"
-    );
-  }
-
+  /* Client feedback: engraving, delivery estimate and the three accordions
+     are gone; "Book an appointment" becomes "Contact". */
   function ctaHTML() {
     return (
       '<div class="pdp-cta">' +
@@ -248,69 +210,24 @@
         "</div>" +
         '<button type="button" class="btn btn--lg btn--block js-add">Add to cart</button>' +
       "</div>" +
-      '<a class="btn btn--outline btn--block pdp-book" href="contact.html">Book an appointment</a>'
-    );
-  }
-
-  function accordionItem(id, title, contentHTML, open) {
-    return (
-      '<div class="accordion__item">' +
-        "<h3>" +
-          '<button class="accordion__trigger js-acc-trigger" type="button" id="acc-t-' + id + '"' +
-            ' aria-expanded="' + (open ? "true" : "false") + '" aria-controls="acc-p-' + id + '">' +
-            title + '<span class="accordion__icon" aria-hidden="true"></span>' +
-          "</button>" +
-        "</h3>" +
-        '<div class="accordion__panel js-acc-panel" id="acc-p-' + id + '" role="region" aria-labelledby="acc-t-' + id + '">' +
-          '<div class="accordion__content">' + contentHTML + "</div>" +
-        "</div>" +
-      "</div>"
-    );
-  }
-
-  function accordionHTML() {
-    var detailsList =
-      '<ul class="pdp-details-list">' +
-      product.details.map(function (d) { return "<li>" + d + "</li>"; }).join("") +
-      "</ul>";
-    var care =
-      "<p>Solid gold asks very little of you. Let your piece be the last thing you put on and the first you take " +
-      "off — perfume, hairspray and chlorinated water dull stones and finish faster than years of wear ever will. " +
-      "Between wears, rest it in its Miró pouch or box, apart from other jewellery, so settings and polish never quarrel.</p>" +
-      "<p>To clean at home, soak it for a few minutes in lukewarm water with a drop of mild soap, work gently with a " +
-      "soft brush, rinse and pat dry with a lint-free cloth. Once a year, bring it back to us — cleaning, polishing " +
-      "and plating touch-ups are complimentary for the life of the piece.</p>";
-    var shippingReturns =
-      "<p>Every order travels fully insured with signature-on-delivery — within 3–5 working days to metro pincodes " +
-      "and 5–8 days elsewhere in India. Made-to-order pieces list their crafting window under “The details” above.</p>" +
-      "<p>Unworn pieces may be returned or resized within 15 days of delivery, no questions asked. And our lifetime " +
-      "care promise travels with the piece, not the invoice — whoever inherits it, inherits us too.</p>";
-    return (
-      '<div class="accordion pdp-accordion js-accordion">' +
-        accordionItem("details", "The details", detailsList, true) +
-        accordionItem("care", "Materials & care", care, false) +
-        accordionItem("shipping", "Shipping & returns", shippingReturns, false) +
-      "</div>"
+      '<a class="btn btn--outline btn--block pdp-book" href="contact.html">Contact</a>'
     );
   }
 
   /* ============================================================
-     Render
+     Render — per client "Sample product details": title, price,
+     description, carat lines, metal, size + guide, qty + CTA
      ============================================================ */
   pdpWrap.innerHTML =
     galleryHTML() +
     '<div class="pdp-buy">' +
-      '<p class="eyebrow">' + catLabel + (collection ? " · " + collection.name : "") + "</p>" +
       '<h1 class="pdp-title">' + product.name + "</h1>" +
       priceHTML() +
       '<p class="pdp-desc">' + product.description + "</p>" +
       specsHTML() +
       metalHTML() +
       sizeHTML() +
-      customHTML() +
-      deliveryHTML() +
       ctaHTML() +
-      accordionHTML() +
     "</div>";
 
   /* ============================================================
@@ -319,7 +236,6 @@
   var stage = pdpWrap.querySelector(".js-stage");
   var mainImg = pdpWrap.querySelector(".js-main-img");
   var zoomPane = pdpWrap.querySelector(".js-zoom");
-  var zoomHint = pdpWrap.querySelector(".js-zoom-hint");
   var thumbBtns = pdpWrap.querySelectorAll(".js-thumb");
 
   function largeUrl() {
@@ -357,14 +273,7 @@
      ============================================================ */
   var desktopZoom = window.matchMedia("(min-width: 900px) and (hover: hover) and (pointer: fine)");
 
-  function setHint() {
-    zoomHint.textContent = desktopZoom.matches
-      ? "Hover over the image to magnify"
-      : "Tap the image to zoom · drag to pan";
-  }
-  setHint();
   function onZoomModeChange() {
-    setHint();
     stage.classList.remove("is-touch-zoom");
     zoomPane.classList.remove("is-active");
   }
@@ -414,7 +323,6 @@
      Metal selection
      ============================================================ */
   var metalName = pdpWrap.querySelector(".js-metal-name");
-  var karatEl = pdpWrap.querySelector(".js-karat");
   pdpWrap.querySelectorAll(".js-metal-chip").forEach(function (chip) {
     chip.addEventListener("click", function () {
       pdpWrap.querySelectorAll(".js-metal-chip").forEach(function (c) {
@@ -424,7 +332,6 @@
       state.metal = chip.getAttribute("data-metal");
       state.karat = chip.getAttribute("data-karat");
       metalName.textContent = state.metal;
-      karatEl.textContent = state.karat + " gold";
     });
   });
 
@@ -470,42 +377,6 @@
   }
 
   /* ============================================================
-     Engraving + gift wrap
-     ============================================================ */
-  var engraveInput = pdpWrap.querySelector("#engrave-input");
-  var engraveCount = pdpWrap.querySelector(".js-engrave-count");
-  var engravePreview = pdpWrap.querySelector(".js-engrave-preview");
-  var giftWrapBox = pdpWrap.querySelector(".js-giftwrap");
-
-  engraveInput.addEventListener("input", function () {
-    var val = engraveInput.value.slice(0, ENGRAVE_MAX);
-    var left = ENGRAVE_MAX - val.length;
-    engraveCount.textContent = left + (left === 1 ? " character" : " characters") + " remaining";
-    engravePreview.textContent = val || PREVIEW_PLACEHOLDER;
-    engravePreview.parentNode.classList.toggle("is-live", val.length > 0);
-  });
-
-  /* ============================================================
-     Delivery estimate
-     ============================================================ */
-  var pinInput = pdpWrap.querySelector("#pin-input");
-  var pinResult = pdpWrap.querySelector(".js-pin-result");
-
-  function checkPin() {
-    var res = Miro.deliveryEstimate(pinInput.value);
-    pinResult.textContent = res.label;
-    pinResult.classList.toggle("is-ok", res.ok);
-    pinResult.classList.toggle("is-err", !res.ok);
-  }
-  pinInput.addEventListener("input", function () {
-    pinInput.value = pinInput.value.replace(/\D/g, "").slice(0, 6);
-  });
-  pinInput.addEventListener("keydown", function (e) {
-    if (e.key === "Enter") { e.preventDefault(); checkPin(); }
-  });
-  pdpWrap.querySelector(".js-check-pin").addEventListener("click", checkPin);
-
-  /* ============================================================
      Quantity + add to cart
      ============================================================ */
   var qtyInput = pdpWrap.querySelector(".js-qty-input");
@@ -530,8 +401,8 @@
       metal: state.metal,
       size: state.size,
       qty: state.qty,
-      engraving: engraveInput.value.trim() || null,
-      giftWrap: giftWrapBox.checked
+      engraving: null,
+      giftWrap: false
     });
     MiroToast(product.name + " added to your bag · " + '<a href="cart.html">View bag</a>');
     addBtn.textContent = "Added ✓";
@@ -541,33 +412,6 @@
       addBtn.textContent = "Add to cart";
       addBtn.removeAttribute("disabled");
     }, 1600);
-  });
-
-  /* ============================================================
-     Accordion — max-height driven for smooth open/close
-     ============================================================ */
-  var accTriggers = pdpWrap.querySelectorAll(".js-acc-trigger");
-  function panelFor(trigger) {
-    return document.getElementById(trigger.getAttribute("aria-controls"));
-  }
-  accTriggers.forEach(function (trigger) {
-    var panel = panelFor(trigger);
-    if (trigger.getAttribute("aria-expanded") === "true") {
-      panel.style.maxHeight = panel.scrollHeight + "px";
-    }
-    trigger.addEventListener("click", function () {
-      var open = trigger.getAttribute("aria-expanded") !== "true";
-      trigger.setAttribute("aria-expanded", String(open));
-      panel.style.maxHeight = open ? panel.scrollHeight + "px" : "0px";
-    });
-  });
-  window.addEventListener("resize", function () {
-    accTriggers.forEach(function (trigger) {
-      if (trigger.getAttribute("aria-expanded") === "true") {
-        var panel = panelFor(trigger);
-        panel.style.maxHeight = panel.scrollHeight + "px";
-      }
-    });
   });
 
   /* ============================================================

@@ -725,7 +725,7 @@
     return (n < 0 ? "−₹" : "₹") + grouped;
   }
 
-  /* GST on jewellery: 3% (1.5% CGST + 1.5% SGST), prices tax-inclusive */
+  /* GST on jewelry: 3% (1.5% CGST + 1.5% SGST), prices tax-inclusive */
   function gst(totalInclusive) {
     var taxable = totalInclusive / 1.03;
     var tax = totalInclusive - taxable;
@@ -867,6 +867,25 @@
     opts = opts || {};
     var w = opts.width || 700;
     var im = p.images[0];
+
+    /* Minimal listing card (client feedback): image only — the name and a
+       secondary photo are revealed on hover; no badge, price or category. */
+    if (opts.minimal) {
+      var im2 = p.images[1];
+      return (
+        '<article class="pcard pcard--minimal' + (opts.className ? " " + opts.className : "") + '">' +
+          '<div class="pcard__media">' +
+            '<img src="' + img(im.id, w, im.p) + '" alt="' + p.name + " — " + CATEGORY_LABEL[p.category] + '" loading="lazy" width="900" height="1200">' +
+            (im2
+              ? '<img class="pcard__alt" src="' + img(im2.id, w, im2.p) + '" alt="" aria-hidden="true" loading="lazy" width="900" height="1200">'
+              : "") +
+            '<span class="pcard__hovername">' + p.name + "</span>" +
+          "</div>" +
+          '<a class="pcard__link" href="product.html?id=' + p.id + '" aria-label="View ' + p.name + '"></a>' +
+        "</article>"
+      );
+    }
+
     var badge = "";
     if (p.badge === "New") badge = '<span class="badge badge--new pcard__badge">New</span>';
     else if (p.badge === "Bestseller") badge = '<span class="badge badge--bestseller pcard__badge">Bestseller</span>';

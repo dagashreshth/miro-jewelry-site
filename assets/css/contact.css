@@ -1,30 +1,48 @@
 /* ============================================================
    Miró — Contact page styles (mobile-first)
-   Split layout: inquiry form + atelier card & stylised map.
+   Client feedback 2026-07: the page reads like a postcard —
+   message on the left, sender details on the right, a rule
+   between the two. Atelier card + map live at the bottom.
    ============================================================ */
 
-/* ---------- Split grid ---------- */
-.contact-grid { display: grid; gap: 56px; }
+/* ---------- Postcard ---------- */
+.contact-main { padding-block: clamp(40px, 6vw, 80px); }
+.contact-postcard-wrap { max-width: 1080px; }
+.postcard {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+  padding: clamp(24px, 4.5vw, 56px);
+}
+.postcard__title {
+  font-size: clamp(26px, 3.6vw, 38px); font-weight: 400;
+  margin-bottom: clamp(22px, 3.5vw, 36px);
+}
+.postcard__grid { display: grid; gap: 28px; }
+.postcard__divider { border-top: 1px solid var(--line); }
+.postcard__left, .postcard__right { display: grid; gap: 22px; align-content: start; }
+.postcard__message .textarea { min-height: 180px; }
+.postcard__foot {
+  display: grid; gap: 20px;
+  margin-top: 28px; padding-top: 24px;
+  border-top: 1px solid var(--line-soft);
+}
 @media (min-width: 900px) {
-  .contact-grid {
-    grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
-    gap: 64px; align-items: start;
+  .postcard__grid {
+    grid-template-columns: minmax(0, 1.15fr) 1px minmax(0, 0.85fr);
+    gap: clamp(28px, 4vw, 52px);
+    align-items: stretch;
   }
-}
-@media (min-width: 1200px) {
-  .contact-grid { gap: 96px; }
+  .postcard__divider { border-top: 0; border-left: 1px solid var(--line); }
+  .postcard__foot { grid-template-columns: minmax(0, 1fr) auto; align-items: center; }
+  .postcard__foot .btn--block { width: auto; padding-inline: 42px; }
 }
 
-/* ---------- Form column ---------- */
-.contact-form-head h2 { margin-top: 10px; }
-.contact-intro { margin: 14px 0 30px; max-width: 52ch; }
-
-.contact-form { display: grid; gap: 22px; }
 .contact-form__row { display: grid; gap: 22px; }
 @media (min-width: 600px) {
   .contact-form__row { grid-template-columns: 1fr 1fr; gap: 20px; }
 }
-.contact-form__submit { margin-top: 6px; }
 
 /* Conditional appointment fieldset */
 .contact-appt {
@@ -73,28 +91,14 @@
 .contact-success__hint { margin-top: 6px; font-size: 13px; color: var(--ink-soft); }
 .contact-success__again { margin-top: 26px; }
 
-/* ---------- Reassurance row ---------- */
-.contact-assure {
-  display: flex; flex-wrap: wrap; align-items: center;
-  gap: 10px 14px;
-  margin-top: 32px; padding-top: 22px;
-  border-top: 1px solid var(--line);
+/* ---------- Atelier section — bottom of the page (client feedback) ---------- */
+.contact-atelier__grid { display: grid; gap: 40px; }
+@media (min-width: 900px) {
+  .contact-atelier__grid {
+    grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+    gap: 64px; align-items: start;
+  }
 }
-.contact-assure li {
-  font-size: 11px; font-weight: 700; letter-spacing: 0.18em;
-  text-transform: uppercase; color: var(--ink-soft);
-}
-.contact-assure li + li::before {
-  content: "·"; color: var(--raspberry); margin-right: 14px;
-}
-.contact-faq-note { margin-top: 14px; font-size: 13.5px; color: var(--ink-soft); }
-.contact-faq-note a {
-  color: var(--navy); font-weight: 600;
-  text-decoration: underline; text-underline-offset: 3px;
-  text-decoration-color: var(--line);
-  transition: color 0.2s var(--ease), text-decoration-color 0.2s var(--ease);
-}
-.contact-faq-note a:hover { color: var(--raspberry); text-decoration-color: var(--raspberry); }
 
 /* ---------- Atelier card ---------- */
 .atelier-card {
@@ -151,13 +155,13 @@
   position: absolute; top: -15%; right: -20%;
   width: 52%; height: 130%;
   background: var(--teal-tint);
-  border-left: 2px solid rgba(25, 144, 141, 0.3);
+  border-left: 2px solid rgba(12, 31, 66, 0.25);
   border-radius: 48% 0 0 52% / 55% 0 0 45%;
 }
 .map-art__park {
   position: absolute; left: 7%; bottom: 12%;
   width: 26%; height: 24%;
-  background: rgba(25, 144, 141, 0.14);
+  background: rgba(12, 31, 66, 0.10);
   border-radius: 40% 60% 55% 45% / 50% 45% 55% 50%;
 }
 .map-art__streets {
@@ -187,7 +191,7 @@
   position: absolute; left: 42%; top: 46%;
   transform: translate(-50%, -85%);
   color: var(--raspberry);
-  filter: drop-shadow(0 8px 12px rgba(191, 37, 99, 0.35));
+  filter: drop-shadow(0 8px 12px rgba(12, 31, 66, 0.35));
 }
 .map-art__pin svg { width: 38px; height: 38px; }
 .map-art__pin::after {
@@ -199,7 +203,7 @@
   position: absolute; left: 12px; bottom: 12px; z-index: 2;
   display: inline-flex; align-items: center;
   padding: 9px 14px;
-  background: rgba(250, 247, 241, 0.94);
+  background: rgba(255, 255, 255, 0.94);
   border: 1px solid var(--line-soft); border-radius: var(--radius);
   font-size: 11px; font-weight: 700; letter-spacing: 0.16em;
   text-transform: uppercase; color: var(--navy);

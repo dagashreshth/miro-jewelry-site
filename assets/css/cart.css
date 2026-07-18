@@ -42,7 +42,7 @@
   border-radius: 999px;
   transition: width 0.5s var(--ease);
 }
-.ship-note--unlocked { background: var(--teal-tint); border-color: rgba(25, 144, 141, 0.35); }
+.ship-note--unlocked { background: var(--teal-tint); border-color: rgba(12, 31, 66, 0.30); }
 .ship-note--unlocked .ship-note__text { color: var(--teal-text); font-weight: 600; }
 .ship-note--unlocked .ship-note__track { display: none; }
 

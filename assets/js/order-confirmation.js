@@ -132,7 +132,7 @@
   var grandStored = first(amounts.total, order.total, order.grandTotal);
   var grand = grandStored === null ? subtotal + ship : (Number(grandStored) || subtotal + ship);
 
-  /* Invoice GST breakdown — always derived from the jewellery value alone
+  /* Invoice GST breakdown — always derived from the jewelry value alone
      (grand − shipping). checkout.js stores GST computed over subtotal +
      shipping, so its stored taxable figure already contains the shipping fee
      and would double-count it against the separate shipping row below.
@@ -246,7 +246,7 @@
   setHTML(".js-invoice-meta", metaBits.join("<br>"));
 
   var rows = [
-    ["Taxable value — jewellery (HSN 7113)", Miro.fmt(gst.taxable)],
+    ["Taxable value — jewelry (HSN 7113)", Miro.fmt(gst.taxable)],
     ["CGST @ 1.5%", Miro.fmt(gst.cgst)],
     ["SGST @ 1.5%", Miro.fmt(gst.sgst)],
     [ship === 0 ? "Insured shipping — complimentary" : "Insured shipping & handling", Miro.fmt(ship)]

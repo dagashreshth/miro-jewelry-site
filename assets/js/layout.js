@@ -20,15 +20,15 @@
     whatsapp: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5.1-1.3A10 10 0 1 0 12 2Zm0 1.8a8.2 8.2 0 1 1-4.2 15.3l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 0 1 12 3.8Zm-3.1 4c-.2 0-.5.1-.7.4-.2.3-.9.9-.9 2.1 0 1.3.9 2.5 1 2.7.1.2 1.8 2.9 4.5 4 2.2.9 2.7.7 3.2.7.5-.1 1.6-.7 1.8-1.3.2-.6.2-1.2.2-1.3-.1-.1-.2-.2-.5-.3l-1.8-.9c-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.4-3c-.1-.2 0-.4.1-.5l.6-.8c.1-.2.1-.4 0-.6L10 8.2c-.1-.3-.3-.4-.5-.4h-.6Z"/></svg>',
     instagram: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" fill="currentColor" stroke="none"/></svg>',
     pin: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 21s7-6.1 7-11a7 7 0 1 0-14 0c0 4.9 7 11 7 11Z"/><circle cx="12" cy="10" r="2.6"/></svg>',
+    mail: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13" rx="1.5"/><path d="m4 7 8 6 8-6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
     arrow: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true" width="16" height="16"><path d="M4 12h15M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>'
   };
 
+  /* Client mockup 2026-07: Home · Collections · Bespoke on the left */
   var NAV = [
     { href: "index.html", label: "Home", page: "home" },
     { href: "collections.html", label: "Collections", page: "collections" },
-    { href: "index.html#our-world", label: "Our World", page: "_world" },
-    { href: "faqs.html", label: "FAQs", page: "faqs" },
-    { href: "contact.html", label: "Contact", page: "contact" }
+    { href: "contact.html", label: "Bespoke", page: "contact" }
   ];
 
   function current(page, item) {
@@ -44,19 +44,17 @@
     }).join("");
 
     return (
-      '<div class="announce">Complimentary insured shipping over ₹50,000 · ' +
-        '<a href="contact.html">Book a private appointment</a></div>' +
-
       '<header class="site-header">' +
         '<div class="site-header__inner">' +
           '<button class="icon-btn hamburger js-open-drawer" aria-label="Open menu" aria-expanded="false">' + ICONS.menu + "</button>" +
+          '<nav class="site-nav" aria-label="Primary">' + nav + "</nav>" +
           '<a class="site-header__logo" href="index.html" aria-label="Miró — Fine Jewelry, home">' +
             '<span class="logo-script" aria-hidden="true">Miró</span>' +
             '<span class="logo-tag">Fine Jewelry · Est. 2025</span>' +
           "</a>" +
-          '<nav class="site-nav" aria-label="Primary">' + nav + "</nav>" +
           '<div class="site-header__icons">' +
             '<button class="icon-btn js-open-search" aria-label="Search the collection">' + ICONS.search + "</button>" +
+            '<a class="icon-btn" href="contact.html" aria-label="Write to the atelier">' + ICONS.mail + "</a>" +
             '<a class="icon-btn" href="cart.html" aria-label="Shopping bag">' + ICONS.bag +
               '<span class="cart-count js-cart-count" aria-hidden="true">0</span>' +
             "</a>" +
@@ -102,7 +100,7 @@
             '<div class="site-footer__brand">' +
               '<a href="index.html" aria-label="Miró home"><span class="logo-script">Miró</span></a>' +
               '<span class="logo-tag">Fine Jewelry · Est. 2025</span>' +
-              "<p>Fine jewellery made in small ateliers, hallmarked by the Bureau of Indian Standards and designed to be inherited — not replaced.</p>" +
+              "<p>Fine jewelry made in small ateliers, hallmarked by the Bureau of Indian Standards and designed to be inherited — not replaced.</p>" +
               '<div class="site-footer__social">' +
                 '<a href="' + IG_LINK + '" target="_blank" rel="noopener" aria-label="Miró on Instagram">' + ICONS.instagram + "</a>" +
                 '<a href="' + WA_LINK + '" target="_blank" rel="noopener" aria-label="Miró on WhatsApp">' + ICONS.whatsapp + "</a>" +
@@ -110,19 +108,16 @@
             "</div>" +
             '<nav class="site-footer__col" aria-label="Shop">' +
               "<h4>Shop</h4><ul>" +
-                '<li><a href="collections.html">All jewellery</a></li>' +
+                '<li><a href="collections.html">All jewelry</a></li>' +
                 '<li><a href="collections.html?collection=solitaire">The Solitaire Edit</a></li>' +
                 '<li><a href="collections.html?collection=everyday">Everyday Gold</a></li>' +
                 '<li><a href="collections.html?collection=heirloom">The Heirloom Room</a></li>' +
-                '<li><a href="cart.html">Shopping bag</a></li>' +
               "</ul></nav>" +
             '<nav class="site-footer__col" aria-label="Care">' +
               "<h4>Client care</h4><ul>" +
                 '<li><a href="faqs.html">FAQs</a></li>' +
                 '<li><a href="contact.html">Contact us</a></li>' +
-                '<li><a href="contact.html">Book an appointment</a></li>' +
-                '<li><a href="faqs.html#returns">Returns & exchanges</a></li>' +
-                '<li><a href="faqs.html#care">Jewellery care</a></li>' +
+                '<li><a href="faqs.html#care">Jewelry care</a></li>' +
               "</ul></nav>" +
             '<div class="site-footer__col">' +
               "<h4>The atelier</h4>" +

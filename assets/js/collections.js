@@ -69,7 +69,7 @@
   };
 
   var DEFAULT_EYEBROW = els.heroEyebrow ? els.heroEyebrow.textContent : "The collection";
-  var DEFAULT_TITLE = els.heroTitle ? els.heroTitle.textContent : "All jewellery";
+  var DEFAULT_TITLE = els.heroTitle ? els.heroTitle.textContent : "All jewelry";
   var DEFAULT_LEDE = els.heroLede ? els.heroLede.textContent : "";
   var DEFAULT_DOC_TITLE = document.title;
 
@@ -188,27 +188,28 @@
     els.heroBanner.hidden = false;
   }
   function updateHero() {
+    /* Hero is title-only now — guard every optional node */
     var c = state.collection ? findCollection(state.collection) : null;
     if (c) {
-      els.heroEyebrow.textContent = "A Miró collection";
-      els.heroTitle.textContent = c.name;
-      els.heroLede.textContent = c.tagline;
-      els.crumbCurrent.textContent = c.name;
+      if (els.heroEyebrow) els.heroEyebrow.textContent = "A Miró collection";
+      if (els.heroTitle) els.heroTitle.textContent = c.name;
+      if (els.heroLede) els.heroLede.textContent = c.tagline;
+      if (els.crumbCurrent) els.crumbCurrent.textContent = c.name;
       document.title = c.name + " — Miró Fine Jewelry";
       setBanner(c);
     } else if (state.category !== "all") {
       var label = Miro.CATEGORY_LABEL[state.category];
-      els.heroEyebrow.textContent = DEFAULT_EYEBROW;
-      els.heroTitle.textContent = label;
-      els.heroLede.textContent = CATEGORY_LEDE[state.category] || DEFAULT_LEDE;
-      els.crumbCurrent.textContent = label;
+      if (els.heroEyebrow) els.heroEyebrow.textContent = DEFAULT_EYEBROW;
+      if (els.heroTitle) els.heroTitle.textContent = label;
+      if (els.heroLede) els.heroLede.textContent = CATEGORY_LEDE[state.category] || DEFAULT_LEDE;
+      if (els.crumbCurrent) els.crumbCurrent.textContent = label;
       document.title = label + " — Miró Fine Jewelry";
       setBanner(null);
     } else {
-      els.heroEyebrow.textContent = DEFAULT_EYEBROW;
-      els.heroTitle.textContent = DEFAULT_TITLE;
-      els.heroLede.textContent = DEFAULT_LEDE;
-      els.crumbCurrent.textContent = DEFAULT_TITLE;
+      if (els.heroEyebrow) els.heroEyebrow.textContent = DEFAULT_EYEBROW;
+      if (els.heroTitle) els.heroTitle.textContent = DEFAULT_TITLE;
+      if (els.heroLede) els.heroLede.textContent = DEFAULT_LEDE;
+      if (els.crumbCurrent) els.crumbCurrent.textContent = DEFAULT_TITLE;
       document.title = DEFAULT_DOC_TITLE;
       setBanner(null);
     }
@@ -309,7 +310,9 @@
     if (els.grid) {
       els.grid.classList.toggle("plist--anim", animate !== false);
       els.grid.innerHTML = list.map(function (p) {
-        return Miro.productCard(p, { width: 700 });
+        /* Client feedback: larger images, no name/price/badge on the page —
+           name + secondary photo appear on hover only */
+        return Miro.productCard(p, { width: 900, minimal: true });
       }).join("");
     }
     if (els.empty) els.empty.hidden = list.length !== 0;

@@ -30,7 +30,7 @@
   function totals() {
     var sub = Miro.cart.subtotal();
     var ship = Miro.shipping(sub);
-    /* GST is broken out of the jewellery value only (shipping shown separately);
+    /* GST is broken out of the jewelry value only (shipping shown separately);
        taxable derived by subtraction so the rows always sum exactly — must stay
        in step with the invoice math in order-confirmation.js */
     var g = Miro.gst(sub);

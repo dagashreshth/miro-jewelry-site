@@ -8,20 +8,14 @@
   /* ---------- Featured collections (3, side by side) ---------- */
   var colWrap = document.querySelector(".js-collections");
   if (colWrap) {
+    /* Client feedback: collection name sits below the image, nothing overlaid */
     colWrap.innerHTML = Miro.COLLECTIONS.map(function (c, i) {
-      var count = Miro.PRODUCTS.filter(function (p) { return p.collection === c.filter; }).length;
       return (
         '<a class="ccard reveal reveal--d' + (i + 1) + '" href="collections.html?collection=' + c.id + '">' +
-          '<img src="' + Miro.img(c.image.id, 900) + '" alt="' + c.name + '" loading="lazy" width="900" height="1200">' +
-          '<span class="ccard__veil" aria-hidden="true"></span>' +
-          '<span class="ccard__body">' +
-            '<span class="ccard__kicker">' + count + " pieces</span>" +
-            '<span class="ccard__name">' + c.name + "</span>" +
-            '<span class="ccard__tag">' + c.tagline + "</span>" +
-            '<span class="ccard__cta">Explore ' +
-              '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="14" height="14" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
-            "</span>" +
+          '<span class="ccard__media">' +
+            '<img src="' + Miro.img(c.image.id, 900) + '" alt="' + c.name + '" loading="lazy" width="900" height="1200">' +
           "</span>" +
+          '<span class="ccard__name">' + c.name + "</span>" +
         "</a>"
       );
     }).join("");
@@ -42,10 +36,11 @@
   /* ---------- Instagram gallery ---------- */
   var instaWrap = document.querySelector(".js-instagram");
   if (instaWrap) {
-    instaWrap.innerHTML = Miro.EDITORIAL.instagram.map(function (im, i) {
+    /* Client feedback: solid, gapless grid of 5 editorial images */
+    instaWrap.innerHTML = Miro.EDITORIAL.instagram.slice(0, 5).map(function (im, i) {
       return (
         '<a href="' + MiroLinks.instagram + '" target="_blank" rel="noopener" aria-label="Open Miró on Instagram — post ' + (i + 1) + '">' +
-          '<img src="' + Miro.img(im.id, 600, "&fit=crop&ar=1:1") + '" alt="Miró on Instagram — editorial jewellery photograph ' + (i + 1) + '" loading="lazy" width="600" height="600">' +
+          '<img src="' + Miro.img(im.id, 600, "&fit=crop&ar=1:1") + '" alt="Miró on Instagram — editorial jewelry photograph ' + (i + 1) + '" loading="lazy" width="600" height="600">' +
           '<span class="insta__veil">' + MiroIcons.instagram + "</span>" +
         "</a>"
       );
