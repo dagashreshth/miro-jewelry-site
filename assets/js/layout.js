@@ -24,11 +24,14 @@
     arrow: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true" width="16" height="16"><path d="M4 12h15M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>'
   };
 
-  /* Client mockup 2026-07: Home · Collections · Bespoke on the left */
+  /* Client mockup 2026-07: Home · Collections · Bespoke on the left.
+     2026-07-28: Bespoke is its own page (custom orders only); general
+     inquiries live on contact.html, reached via the envelope icon. */
   var NAV = [
     { href: "index.html", label: "Home", page: "home" },
     { href: "collections.html", label: "Collections", page: "collections" },
-    { href: "contact.html", label: "Bespoke", page: "contact" }
+    { href: "bespoke.html", label: "Bespoke", page: "bespoke" },
+    { href: "contact.html", label: "Contact", page: "contact" }
   ];
 
   function current(page, item) {
@@ -49,7 +52,8 @@
           '<button class="icon-btn hamburger js-open-drawer" aria-label="Open menu" aria-expanded="false">' + ICONS.menu + "</button>" +
           '<nav class="site-nav" aria-label="Primary">' + nav + "</nav>" +
           '<a class="site-header__logo" href="index.html" aria-label="Miró — Fine Jewelry, home">' +
-            '<span class="logo-script" aria-hidden="true">Miró</span>' +
+            '<img class="logo-mark" src="assets/img/miro-logo-wordmark.png" alt="Miró" ' +
+              'width="640" height="351" fetchpriority="high">' +
             '<span class="logo-tag">Fine Jewelry · Est. 2025</span>' +
           "</a>" +
           '<div class="site-header__icons">' +
@@ -66,7 +70,7 @@
         '<div class="drawer__scrim js-close-drawer"></div>' +
         '<div class="drawer__panel" role="dialog" aria-modal="true" aria-label="Menu">' +
           '<div class="drawer__head">' +
-            '<span class="logo-script">Miró</span>' +
+            '<img class="logo-mark logo-mark--drawer" src="assets/img/miro-logo-wordmark.png" alt="Miró" width="640" height="351">' +
             '<button class="icon-btn js-close-drawer" aria-label="Close menu">' + ICONS.close + "</button>" +
           "</div>" +
           '<nav class="drawer__nav" aria-label="Mobile">' + drawerNav + "</nav>" +
@@ -98,7 +102,9 @@
         '<div class="container">' +
           '<div class="site-footer__main">' +
             '<div class="site-footer__brand">' +
-              '<a href="index.html" aria-label="Miró home"><span class="logo-script">Miró</span></a>' +
+              '<a href="index.html" aria-label="Miró home">' +
+                '<img class="logo-mark logo-mark--footer" src="assets/img/miro-logo-wordmark-white.png" alt="Miró" width="640" height="351" loading="lazy">' +
+              "</a>" +
               '<span class="logo-tag">Fine Jewelry · Est. 2025</span>' +
               "<p>Fine jewelry made in small ateliers, hallmarked by the Bureau of Indian Standards and designed to be inherited — not replaced.</p>" +
               '<div class="site-footer__social">' +
@@ -116,6 +122,7 @@
             '<nav class="site-footer__col" aria-label="Care">' +
               "<h4>Client care</h4><ul>" +
                 '<li><a href="faqs.html">FAQs</a></li>' +
+                '<li><a href="bespoke.html">Bespoke orders</a></li>' +
                 '<li><a href="contact.html">Contact us</a></li>' +
                 '<li><a href="faqs.html#care">Jewelry care</a></li>' +
               "</ul></nav>" +

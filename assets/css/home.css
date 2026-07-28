@@ -11,28 +11,40 @@
   justify-content: space-between; gap: 16px;
 }
 
-/* ---------- Hero — image only (client feedback) ---------- */
+/* ---------- Hero — two images side by side, no gap (client feedback) ---------- */
 .hero {
-  position: relative;
-  min-height: 72svh;
-  overflow: hidden;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  height: 54svh;
   background: var(--cream-soft);
 }
-.hero__media, .hero__media img {
+.hero__pane {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+}
+.hero__pane img {
   position: absolute; inset: 0; width: 100%; height: 100%;
-  object-fit: cover; object-position: 62% 30%;
+  object-fit: cover; object-position: 55% 30%;
 }
 @media (min-width: 900px) {
-  .hero { min-height: 88svh; }
-  .hero__media img { object-position: 55% 25%; }
+  .hero { height: 80svh; }
+  .hero__pane img { object-position: 55% 25%; }
 }
 
-/* ---------- Featured collections — name below the image ---------- */
-.collection-grid { gap: 16px; }
+/* ---------- Featured collections — smaller, butted together,
+     names in Avenir (client feedback) ---------- */
+.collection-grid {
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0; max-width: 900px; margin-inline: auto;
+}
+/* Heading sits on the same 900px band as the trio of images */
+.section-head--collection { max-width: 900px; margin-inline: auto; }
 .ccard { display: block; }
 .ccard__media {
-  display: block; overflow: hidden; border-radius: var(--radius-lg);
-  aspect-ratio: 3 / 4; background: var(--cream-soft);
+  display: block; overflow: hidden; border-radius: 0;
+  aspect-ratio: 1 / 1; background: var(--cream-soft);
 }
 .ccard__media img {
   width: 100%; height: 100%; object-fit: cover;
@@ -41,27 +53,13 @@
 .ccard:hover .ccard__media img, .ccard:focus-visible .ccard__media img { transform: scale(1.04); }
 .ccard__name {
   display: block; margin-top: 14px;
-  font-family: var(--font-title); font-weight: 400; color: var(--navy);
-  font-size: clamp(18px, 2vw, 22px); line-height: 1.3;
+  font-family: var(--font-body); font-weight: 500; color: var(--ink);
+  font-size: clamp(13px, 1.3vw, 15px); line-height: 1.3;
+  letter-spacing: 0.06em;
   text-align: center;
 }
 @media (min-width: 900px) {
-  .collection-grid { gap: 24px; }
-}
-
-/* ---------- Bestsellers rail ---------- */
-.rail {
-  display: grid; grid-auto-flow: column; grid-auto-columns: 72%;
-  gap: 16px; overflow-x: auto; padding-bottom: 10px;
-  scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-}
-.rail::-webkit-scrollbar { display: none; }
-.rail .pcard { scroll-snap-align: start; }
-@media (min-width: 600px) { .rail { grid-auto-columns: 42%; } }
-@media (min-width: 900px) {
-  .rail { grid-auto-flow: row; grid-template-columns: repeat(4, 1fr); gap: 28px; overflow: visible; }
+  .collection-grid { gap: 0; grid-template-columns: repeat(3, 1fr); }
 }
 
 /* ---------- About ---------- */
@@ -97,12 +95,12 @@
 .insta__veil {
   position: absolute; inset: 0; z-index: 2;
   display: flex; align-items: center; justify-content: center;
-  background: rgba(12, 31, 66, 0);
+  background: rgba(0, 0, 0, 0);
   color: transparent;
   transition: background 0.3s var(--ease), color 0.3s var(--ease);
 }
 .insta a:hover .insta__veil, .insta a:focus-visible .insta__veil {
-  background: rgba(12, 31, 66, 0.45); color: var(--paper);
+  background: rgba(0, 0, 0, 0.45); color: var(--paper);
 }
 .insta__veil svg { width: 26px; height: 26px; }
 @media (min-width: 700px) { .insta { grid-template-columns: repeat(5, 1fr); } }

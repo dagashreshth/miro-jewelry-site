@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Mulish:wght@300;400;500;600;700&family=Monsieur+La+Doulaise&display=swap" rel="stylesheet">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='48' fill='%23bf2563'/%3E%3Ctext x='50' y='68' font-size='58' text-anchor='middle' fill='%23e8ddcf' font-family='Georgia,serif' font-style='italic'%3EM%3C/text%3E%3C/svg%3E">
+  <link rel="icon" type="image/png" href="assets/img/miro-favicon.png">
   <link rel="stylesheet" href="assets/css/main.css">
   <link rel="stylesheet" href="assets/css/home.css">
   <script src="assets/js/analytics.js"></script>
@@ -19,41 +19,35 @@
 
   <main id="main">
 
-    <!-- ============ Hero banner — image only (client feedback) ============ -->
+    <!-- ============ Hero banner — two images side by side, no gap
+         (client feedback 2026-07-24) ============ -->
     <section class="hero" aria-label="Featured">
       <h1 class="sr-only">Miró Fine Jewelry</h1>
-      <picture class="hero__media">
+      <figure class="hero__pane">
         <img
-          src="https://images.unsplash.com/photo-1611652022419-a9419f74343d?w=1800&q=80&auto=format"
+          src="https://images.unsplash.com/photo-1611652022419-a9419f74343d?w=1200&q=80&auto=format"
           alt="A woman in a soft white shirt wearing a delicate gold pendant necklace"
           fetchpriority="high">
-      </picture>
+      </figure>
+      <figure class="hero__pane">
+        <img
+          src="https://images.unsplash.com/photo-1620656798579-1984d9e87df7?w=1200&q=80&auto=format"
+          alt="A fine gold pendant photographed against black"
+          fetchpriority="high">
+      </figure>
     </section>
 
     <!-- ============ Featured collections (3, side by side) ============ -->
     <section class="section" aria-labelledby="collections-title">
       <div class="container">
-        <div class="section-head reveal">
-          <h2 id="collections-title">Featured collections</h2>
+        <div class="section-head section-head--collection reveal">
+          <h2 id="collections-title">The Collection</h2>
         </div>
         <div class="grid grid--3 collection-grid js-collections reveal"></div>
       </div>
     </section>
 
-    <!-- ============ Bestsellers rail ============ -->
-    <section class="section section--cream-soft" aria-labelledby="bestsellers-title">
-      <div class="container">
-        <div class="section-head section-head--row reveal">
-          <div>
-            <h2 id="bestsellers-title">The icons</h2>
-          </div>
-          <a class="btn--text" href="collections.html">View all jewelry
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="16" height="16" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </a>
-        </div>
-        <div class="rail js-bestsellers reveal"></div>
-      </div>
-    </section>
+    <!-- "The icons" bestsellers rail removed at client request (2026-07-28) -->
 
     <!-- ============ About us — text with photo ============ -->
     <section class="section about" id="our-world" aria-labelledby="about-title">

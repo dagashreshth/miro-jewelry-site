@@ -5,7 +5,11 @@
 /* Guard: keep [hidden] winning over display rules on classes */
 [data-page="cart"] [hidden] { display: none !important; }
 
-/* ---------- Hero ---------- */
+/* ---------- Page head — no banner, text only (client feedback) ---------- */
+[data-page="cart"] .page-hero {
+  background: var(--white);
+  padding: clamp(32px, 5vw, 56px) 0 clamp(8px, 1.5vw, 16px);
+}
 .bag-count { font-size: 15px; color: var(--ink-soft); }
 
 /* ---------- Layout ---------- */
@@ -42,7 +46,7 @@
   border-radius: 999px;
   transition: width 0.5s var(--ease);
 }
-.ship-note--unlocked { background: var(--teal-tint); border-color: rgba(12, 31, 66, 0.30); }
+.ship-note--unlocked { background: var(--teal-tint); border-color: rgba(0, 0, 0, 0.30); }
 .ship-note--unlocked .ship-note__text { color: var(--teal-text); font-weight: 600; }
 .ship-note--unlocked .ship-note__track { display: none; }
 
@@ -183,7 +187,7 @@
 .sum-pay li {
   font-size: 10.5px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
   color: var(--navy); background: rgba(255, 255, 255, 0.55);
-  border: 1px solid rgba(12, 31, 66, 0.22); border-radius: var(--radius);
+  border: 1px solid rgba(0, 0, 0, 0.22); border-radius: var(--radius);
   padding: 5px 10px;
 }
 .sum-wa {
@@ -204,7 +208,12 @@
 
 /* ---------- Empty state ---------- */
 .bag-empty { text-align: center; padding-block: clamp(28px, 6vw, 64px); }
-.bag-empty__title { font-size: clamp(28px, 5.4vw, 44px); color: var(--navy); }
+/* Client feedback: smaller, set in Avenir rather than the serif italic */
+.bag-empty__title {
+  font-family: var(--font-body); font-weight: 400;
+  font-size: clamp(17px, 2.2vw, 21px); letter-spacing: 0.02em;
+  color: var(--ink);
+}
 .bag-empty p { max-width: 52ch; margin: 16px auto 0; }
 .bag-empty .btn { margin-top: 30px; }
 

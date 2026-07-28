@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bespoke Orders — Miró Fine Jewelry</title>
+  <meta name="description" content="Commission a one-of-a-kind Miró piece — engagement rings, wedding bands and heirloom redesigns drawn with you and made by hand in our Kala Ghoda atelier.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Mulish:wght@300;400;500;600;700&family=Monsieur+La+Doulaise&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="assets/img/miro-favicon.png">
+  <link rel="stylesheet" href="assets/css/main.css">
+  <link rel="stylesheet" href="assets/css/contact.css">
+  <script src="assets/js/analytics.js"></script>
+</head>
+<body data-page="bespoke">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div id="site-chrome-top"></div>
+
+  <main id="main">
+
+    <!-- ============ Bespoke commissions — custom requests only
+         (client feedback 2026-07-28: bespoke lives on its own page) ============ -->
+    <section class="section contact-main" aria-labelledby="bespoke-title">
+      <div class="container contact-postcard-wrap">
+
+        <div class="postcard js-form-wrap">
+          <h1 id="bespoke-title" class="postcard__title">Bespoke Orders</h1>
+          <p class="postcard__lede">Tell us what you have in mind and we'll draw it with you — a first
+            sketch within five working days, then a wax or CAD to approve before a single stone is set.</p>
+
+          <form class="contact-form js-bespoke-form" novalidate>
+            <div class="postcard__grid">
+
+              <!-- ——— Left face: the commission ——— -->
+              <div class="postcard__left">
+                <div class="field">
+                  <label for="bf-piece">What would you like made?</label>
+                  <select class="select" id="bf-piece" name="piece" aria-describedby="bf-piece-err">
+                    <option value="" selected>Choose a piece…</option>
+                    <option value="Engagement ring">Engagement ring</option>
+                    <option value="Wedding bands">Wedding bands</option>
+                    <option value="Necklace or pendant">Necklace or pendant</option>
+                    <option value="Earrings">Earrings</option>
+                    <option value="Bracelet or bangle">Bracelet or bangle</option>
+                    <option value="Heirloom redesign">Redesign an heirloom</option>
+                    <option value="Something else">Something else entirely</option>
+                  </select>
+                  <p class="error-msg" id="bf-piece-err">Please choose what you'd like us to make.</p>
+                </div>
+
+                <div class="contact-form__row">
+                  <div class="field">
+                    <label for="bf-budget">Budget</label>
+                    <select class="select" id="bf-budget" name="budget" aria-describedby="bf-budget-err">
+                      <option value="" selected>Choose a range…</option>
+                      <option value="Under ₹50,000">Under ₹50,000</option>
+                      <option value="₹50,000 – ₹1,50,000">₹50,000 – ₹1,50,000</option>
+                      <option value="₹1,50,000 – ₹3,00,000">₹1,50,000 – ₹3,00,000</option>
+                      <option value="₹3,00,000 – ₹7,50,000">₹3,00,000 – ₹7,50,000</option>
+                      <option value="Above ₹7,50,000">Above ₹7,50,000</option>
+                      <option value="Not sure yet">Not sure yet</option>
+                    </select>
+                    <p class="error-msg" id="bf-budget-err">Please pick a range — it guides the stones we show you.</p>
+                  </div>
+                  <div class="field">
+                    <label for="bf-date">Needed by</label>
+                    <input class="input" id="bf-date" name="wearDate" type="date" aria-describedby="bf-date-hint bf-date-err">
+                    <p class="hint" id="bf-date-hint">Optional — most commissions take 5–7 weeks.</p>
+                    <p class="error-msg" id="bf-date-err">Please pick a date from today onwards.</p>
+                  </div>
+                </div>
+
+                <div class="field postcard__message">
+                  <label for="bf-message">Your idea</label>
+                  <textarea class="textarea" id="bf-message" name="message"
+                            placeholder="A solitaire in her grandmother's setting — rose gold, around 1 carat, she wears size 12…"
+                            aria-describedby="bf-message-err"></textarea>
+                  <p class="error-msg" id="bf-message-err">Do tell us a little — even a line helps us begin.</p>
+                </div>
+              </div>
+
+              <!-- ——— The postcard rule ——— -->
+              <div class="postcard__divider" aria-hidden="true"></div>
+
+              <!-- ——— Right face: who it's from ——— -->
+              <div class="postcard__right">
+                <div class="field">
+                  <label for="bf-name">Full name</label>
+                  <input class="input" id="bf-name" name="name" type="text" autocomplete="name"
+                         placeholder="Aisha Verma" aria-describedby="bf-name-err">
+                  <p class="error-msg" id="bf-name-err">Please tell us your name — we'd like to address you properly.</p>
+                </div>
+                <div class="field">
+                  <label for="bf-email">Email</label>
+                  <input class="input" id="bf-email" name="email" type="email" autocomplete="email"
+                         placeholder="you@example.in" aria-describedby="bf-email-err">
+                  <p class="error-msg" id="bf-email-err">That email doesn't look complete — mind checking it?</p>
+                </div>
+                <div class="field">
+                  <label for="bf-phone">Phone</label>
+                  <input class="input" id="bf-phone" name="phone" type="tel" autocomplete="tel"
+                         inputmode="numeric" maxlength="16" placeholder="98200 12345"
+                         aria-describedby="bf-phone-hint bf-phone-err">
+                  <p class="hint" id="bf-phone-hint">10 digits — our designer may call to talk it through.</p>
+                  <p class="error-msg" id="bf-phone-err">Please enter a valid 10-digit mobile number.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="postcard__foot">
+              <div class="contact-consent">
+                <label class="checkbox-row" for="bf-consent">
+                  <input type="checkbox" id="bf-consent" name="consent">
+                  <span>Miró may contact me on WhatsApp
+                    <small>The fastest way to share sketches, stones and progress photographs.</small>
+                  </span>
+                </label>
+              </div>
+              <button class="btn btn--block contact-form__submit" type="submit">Send my request</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- ——— Success panel (swapped in after submit) ——— -->
+        <div class="contact-success js-success" role="status" tabindex="-1" hidden>
+          <p class="eyebrow eyebrow--teal">Received, with thanks</p>
+          <h2 class="contact-success__title h-serif-italic">Thank you, <span class="js-success-name">friend</span> —
+            your commission is with our designer.</h2>
+          <p class="contact-success__copy">We reply within 4 working hours and send a first sketch within
+            five working days. Nothing is charged until you approve the design.</p>
+          <p class="contact-success__ref">Your reference · <strong class="js-success-ref">BSP-0000000000000</strong></p>
+          <p class="contact-success__hint">Keep it handy — quote it if you write again and we'll pick up
+            the same thread.</p>
+          <button class="btn--text contact-success__again js-reset" type="button">Start another request
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="16" height="16" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+
+        <p class="postcard__aside">Not a commission? <a class="btn--text" href="contact.html">Inquire now</a></p>
+
+      </div>
+    </section>
+
+    <!-- ============ How a commission runs ============ -->
+    <section class="section section--tight bespoke-steps" aria-labelledby="steps-title">
+      <div class="container container--narrow">
+        <h2 id="steps-title" class="text-center reveal">How a commission runs</h2>
+        <ol class="bespoke-steps__list reveal reveal--d1" role="list">
+          <li>
+            <span class="bespoke-steps__n">01</span>
+            <h3>The conversation</h3>
+            <p>You tell us the piece, the person and the budget. We reply within four working hours,
+              on WhatsApp if that's easier.</p>
+          </li>
+          <li>
+            <span class="bespoke-steps__n">02</span>
+            <h3>The drawing</h3>
+            <p>A hand sketch within five working days, then a CAD render once the silhouette is right.
+              Revisions are unlimited and free.</p>
+          </li>
+          <li>
+            <span class="bespoke-steps__n">03</span>
+            <h3>The stones</h3>
+            <p>We source certified stones to your brief and photograph each option on video before
+              anything is bought.</p>
+          </li>
+          <li>
+            <span class="bespoke-steps__n">04</span>
+            <h3>The making</h3>
+            <p>Five to seven weeks in the hands of our karigars, BIS-hallmarked, then delivered insured
+              or collected at the atelier.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+  </main>
+
+  <div id="site-chrome-bottom"></div>
+  <script src="assets/js/store.js"></script>
+  <script src="assets/js/layout.js"></script>
+  <script src="assets/js/bespoke.js"></script>
+</body>
+</html>

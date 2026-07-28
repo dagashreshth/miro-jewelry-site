@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Mulish:wght@300;400;500;600;700&family=Monsieur+La+Doulaise&display=swap" rel="stylesheet">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='48' fill='%23bf2563'/%3E%3Ctext x='50' y='68' font-size='58' text-anchor='middle' fill='%23e8ddcf' font-family='Georgia,serif' font-style='italic'%3EM%3C/text%3E%3C/svg%3E">
+  <link rel="icon" type="image/png" href="assets/img/miro-favicon.png">
   <link rel="stylesheet" href="assets/css/main.css">
   <link rel="stylesheet" href="assets/css/cart.css">
   <script src="assets/js/analytics.js"></script>
@@ -19,12 +19,11 @@
 
   <main id="main">
 
-    <!-- ============ Page hero ============ -->
+    <!-- ============ Page head — text only, no banner (client feedback) ============ -->
     <section class="page-hero" aria-labelledby="bag-title">
       <div class="container">
-        <p class="eyebrow reveal">Your selection</p>
-        <h1 id="bag-title" class="reveal reveal--d1">Shopping bag</h1>
-        <p class="bag-count js-bag-count reveal reveal--d2" aria-live="polite">&nbsp;</p>
+        <h1 id="bag-title" class="reveal">Your Selection</h1>
+        <p class="bag-count js-bag-count reveal reveal--d1" aria-live="polite">&nbsp;</p>
       </div>
     </section>
 
@@ -101,10 +100,8 @@
 
         <!-- Empty state -->
         <div class="bag-empty js-bag-empty" hidden>
-          <h2 class="bag-empty__title h-serif-italic reveal">Your bag is waiting to be filled…</h2>
-          <p class="reveal reveal--d1">Nothing reserved just yet — and every collection begins exactly here. Wander
-            the full edit, or start with the pieces our clients fall for first.</p>
-          <a class="btn btn--lg js-empty-cta reveal reveal--d2" href="collections.html">Explore the collection</a>
+          <h2 class="bag-empty__title reveal">Your bag is waiting to be filled…</h2>
+          <a class="btn btn--lg js-empty-cta reveal reveal--d1" href="collections.html">Explore the collection</a>
         </div>
 
       </div>

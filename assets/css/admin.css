@@ -16,7 +16,7 @@
   display: inline-flex; flex-direction: column; align-items: center; gap: 1px;
   padding: 4px 10px;
 }
-.admin-topbar__logo .logo-script { font-size: 30px; transform: translateY(-2px); }
+.admin-topbar__logo .logo-mark { height: 24px; }
 .admin-tag {
   display: block;
   font-size: 7.5px; font-weight: 700; letter-spacing: 0.32em;
@@ -28,7 +28,7 @@
 
 .admin-scrim {
   position: fixed; inset: 0; z-index: 140;
-  background: rgba(12, 31, 66, 0.5);
+  background: rgba(0, 0, 0, 0.5);
   opacity: 0; visibility: hidden;
   transition: opacity 0.3s var(--ease), visibility 0s 0.3s;
 }
@@ -59,7 +59,7 @@
   padding: 20px 14px 18px 26px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.14);
 }
-.admin-sidebar__brand .logo-script { color: var(--paper); font-size: 42px; line-height: 1; }
+.admin-sidebar__brand .logo-mark { height: 30px; }
 .admin-sidebar__brand .admin-tag { margin-top: 4px; color: rgba(255, 255, 255, 0.55); }
 .admin-sidebar__close { color: var(--cream); }
 .admin-sidebar__close:hover { background: rgba(255, 255, 255, 0.1); color: var(--paper); }
@@ -171,7 +171,7 @@
   background: var(--white);
   border: 1px solid var(--line-soft);
   border-radius: var(--radius-lg);
-  box-shadow: 0 4px 18px rgba(12, 31, 66, 0.04);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
   overflow: hidden;
 }
 .panel__bar {
@@ -204,7 +204,7 @@
   background: var(--white);
   border: 1px solid var(--line-soft);
   border-radius: var(--radius-lg);
-  box-shadow: 0 4px 18px rgba(12, 31, 66, 0.04);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
   padding: 16px 16px 12px;
 }
 .kpi__label {
@@ -256,7 +256,7 @@
 .pill--atelier::before { background: var(--copper); }
 .pill--hallmark { background: rgba(181, 78, 38, 0.12); }
 .pill--hallmark::before { background: var(--copper); }
-.pill--shipped { background: rgba(12, 31, 66, 0.08); }
+.pill--shipped { background: rgba(0, 0, 0, 0.08); }
 .pill--shipped::before { background: var(--navy); }
 .pill--plain {
   background: var(--white); border: 1px solid var(--line);
@@ -402,7 +402,7 @@
 .catcard {
   background: var(--white); border: 1px solid var(--line-soft);
   border-radius: var(--radius-lg); overflow: hidden;
-  box-shadow: 0 4px 18px rgba(12, 31, 66, 0.04);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
   display: flex; flex-direction: column;
 }
 .catcard img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; }
@@ -447,7 +447,7 @@
 .inv-stat {
   background: var(--white); border: 1px solid var(--line-soft);
   border-radius: var(--radius-lg); padding: 14px 14px 12px;
-  box-shadow: 0 4px 18px rgba(12, 31, 66, 0.04);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
 }
 .inv-stat strong {
   display: block; font-family: var(--font-title); font-weight: 500;

@@ -1,6 +1,6 @@
 /* ============================================================
-   Miró — Home page: featured collections, bestsellers rail,
-   Instagram gallery. Requires store.js + layout.js.
+   Miró — Home page: featured collections + Instagram gallery.
+   Requires store.js + layout.js.
    ============================================================ */
 (function () {
   "use strict";
@@ -21,17 +21,7 @@
     }).join("");
   }
 
-  /* ---------- Bestsellers rail ---------- */
-  var railWrap = document.querySelector(".js-bestsellers");
-  if (railWrap) {
-    var picks = Miro.PRODUCTS.filter(function (p) { return p.badge === "Bestseller"; });
-    Miro.PRODUCTS.forEach(function (p) {
-      if (picks.length < 4 && p.badge === "New" && picks.indexOf(p) === -1) picks.push(p);
-    });
-    railWrap.innerHTML = picks.slice(0, 4).map(function (p) {
-      return Miro.productCard(p, { width: 700 });
-    }).join("");
-  }
+  /* The "The icons" bestsellers rail was removed at client request (2026-07-28) */
 
   /* ---------- Instagram gallery ---------- */
   var instaWrap = document.querySelector(".js-instagram");

@@ -17,11 +17,16 @@
   text-transform: uppercase; color: var(--ink-soft);
 }
 
-/* ---------- Sticky toolbar — no partition line (client feedback) ---------- */
+/* Client feedback 2026-07-24: the listing reads narrower, so the product
+   photographs sit smaller on the page. */
+[data-page="collections"] .container { max-width: 1080px; }
+
+/* ---------- Sticky toolbar — pins directly under the header
+     (client feedback: "the categories banner should stick to the top") ---------- */
 .ltoolbar {
   position: sticky;
   top: calc(var(--header-h) - 1px);
-  z-index: 80;
+  z-index: 110;
   background: var(--paper);
 }
 .ltoolbar__inner {
@@ -65,7 +70,6 @@
 }
 
 @media (min-width: 900px) {
-  .ltoolbar { top: 75px; }
   .ltoolbar__inner { flex-wrap: wrap; gap: 10px 16px; padding-block: 12px; }
   .lsearch { flex: 0 1 236px; }
   .lfilter-btn { display: none; }
@@ -205,7 +209,7 @@
 .fsheet.is-open { visibility: visible; pointer-events: auto; }
 .fsheet__scrim {
   position: absolute; inset: 0;
-  background: rgba(12, 31, 66, 0.5);
+  background: rgba(0, 0, 0, 0.5);
   opacity: 0; transition: opacity 0.3s var(--ease);
 }
 .fsheet.is-open .fsheet__scrim { opacity: 1; }

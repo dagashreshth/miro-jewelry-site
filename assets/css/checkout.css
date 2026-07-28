@@ -4,16 +4,12 @@
    summary on desktop, collapsible summary on mobile.
    ============================================================ */
 
-/* ---------- Page hero ---------- */
-.page-hero--checkout { padding-block: clamp(36px, 6vw, 64px); }
-.page-hero--checkout .eyebrow { margin-bottom: 10px; }
-.secure-line {
-  display: inline-flex; align-items: flex-start; justify-content: center; gap: 8px;
-  margin-top: 14px;
-  font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;
-  color: var(--teal-text); line-height: 1.7;
+/* ---------- Page head — no banner, text only (client feedback) ---------- */
+.page-hero--checkout {
+  background: var(--white);
+  padding: clamp(32px, 5vw, 56px) 0 clamp(8px, 1.5vw, 16px);
 }
-.secure-line svg { flex: none; margin-top: 3px; }
+.page-hero--checkout .eyebrow { margin-bottom: 10px; }
 
 /* ---------- Empty-bag guard ---------- */
 .checkout-empty__script { font-size: clamp(26px, 5vw, 36px); color: var(--raspberry); }
@@ -269,7 +265,7 @@
 .pay-overlay[hidden] { display: none; }
 .pay-overlay__inner { max-width: 420px; }
 .pay-overlay__logo {
-  display: block; font-size: clamp(64px, 14vw, 88px); color: var(--raspberry);
+  display: block; height: clamp(44px, 9vw, 60px); width: auto; margin-inline: auto;
   animation: miro-pulse 1.4s var(--ease) infinite;
 }
 .pay-overlay__status {

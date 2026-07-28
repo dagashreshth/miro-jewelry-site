@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Mulish:wght@300;400;500;600;700&family=Monsieur+La+Doulaise&display=swap" rel="stylesheet">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='48' fill='%23bf2563'/%3E%3Ctext x='50' y='68' font-size='58' text-anchor='middle' fill='%23e8ddcf' font-family='Georgia,serif' font-style='italic'%3EM%3C/text%3E%3C/svg%3E">
+  <link rel="icon" type="image/png" href="assets/img/miro-favicon.png">
   <link rel="stylesheet" href="assets/css/main.css">
   <link rel="stylesheet" href="assets/css/checkout.css">
   <script src="assets/js/analytics.js"></script>
@@ -19,15 +19,10 @@
 
   <main id="main">
 
-    <!-- ============ Page hero (calm cream strip) ============ -->
+    <!-- ============ Page head — text only, no banner (client feedback) ============ -->
     <section class="page-hero page-hero--checkout" aria-labelledby="checkout-title">
       <div class="container">
-        <p class="eyebrow eyebrow--navy reveal">Almost hers</p>
-        <h1 id="checkout-title" class="reveal reveal--d1">Checkout</h1>
-        <p class="secure-line reveal reveal--d2">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="15" height="15" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="1.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3" stroke-linecap="round"/></svg>
-          256-bit encrypted · PCI-DSS compliant via Razorpay
-        </p>
+        <h1 id="checkout-title" class="reveal">Checkout</h1>
       </div>
     </section>
 
@@ -323,7 +318,7 @@
   <!-- ============ Processing overlay ============ -->
   <div class="pay-overlay js-pay-overlay" role="alertdialog" aria-modal="true" aria-label="Processing payment" hidden>
     <div class="pay-overlay__inner" aria-live="assertive">
-      <span class="logo-script pay-overlay__logo" aria-hidden="true">Miró</span>
+      <img class="logo-mark pay-overlay__logo" src="assets/img/miro-logo-wordmark.png" alt="" aria-hidden="true" width="640" height="351">
       <p class="pay-overlay__status">Contacting Razorpay…</p>
       <p class="pay-overlay__note">Do not refresh or close this window.</p>
     </div>

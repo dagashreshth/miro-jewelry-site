@@ -1,33 +1,32 @@
 /* ============================================================
    Miró — Fine Jewelry · Design System
-   Palette ratios per brand guide: raspberry+cream dominant,
-   navy+teal secondary, copper/maroon hints only.
+   Palette: black type and controls on white, neutral greys only.
    Mobile-first. Base styles target ~375px.
    ============================================================ */
 
 :root {
-  /* Palette — client feedback 2026-07: minimalist & luxe,
-     white / black / blue only. Legacy variable names kept so
-     page styles continue to resolve; values remapped. */
-  --raspberry: #0c1f42;
-  --raspberry-dark: #081530;
-  --raspberry-tint: #e8edf6;
-  --cream: #f2f4f8;
-  --cream-soft: #f6f7fa;
-  --navy: #0c1f42;
-  --navy-soft: #16294f;
-  --teal: #0c1f42;
-  --teal-text: #0c1f42;
-  --teal-tint: #e8edf6;
-  --copper: #0c1f42;
-  --maroon: #0c1f42;
+  /* Palette — client feedback 2026-07-24: black & white only, no blue.
+     All type, buttons and rules are black; greys are neutral (no blue
+     cast). Legacy variable names kept so page styles keep resolving. */
+  --raspberry: #000000;
+  --raspberry-dark: #262626;
+  --raspberry-tint: #f2f2f2;
+  --cream: #f4f4f4;
+  --cream-soft: #fafafa;
+  --navy: #000000;
+  --navy-soft: #1a1a1a;
+  --teal: #000000;
+  --teal-text: #000000;
+  --teal-tint: #f2f2f2;
+  --copper: #000000;
+  --maroon: #000000;
 
   /* Derived neutrals */
   --paper: #ffffff;
-  --ink: #101319;
-  --ink-soft: #4c5563;
-  --line: #d9dee8;
-  --line-soft: #e9ecf2;
+  --ink: #000000;
+  --ink-soft: #333333;
+  --line: #dcdcdc;
+  --line-soft: #ececec;
   --white: #ffffff;
 
   /* Type — client feedback: Georgia Regular in place of Playfair Display */
@@ -40,8 +39,8 @@
   --space-5: 32px; --space-6: 48px; --space-7: 64px; --space-8: 96px;
   --radius: 2px;
   --radius-lg: 4px;
-  --shadow-soft: 0 10px 40px rgba(12, 31, 66, 0.08);
-  --shadow-lift: 0 18px 60px rgba(12, 31, 66, 0.14);
+  --shadow-soft: 0 10px 40px rgba(0, 0, 0, 0.08);
+  --shadow-lift: 0 18px 60px rgba(0, 0, 0, 0.14);
   --header-h: 64px;
   --announce-h: 38px;
   --ease: cubic-bezier(0.25, 0.1, 0.25, 1);
@@ -104,6 +103,12 @@ p { color: var(--ink-soft); }
   color: var(--navy);
   line-height: 1;
   letter-spacing: 0.01em;
+}
+
+/* Official Miró wordmark (client brand assets, 2026-07) */
+.logo-mark {
+  display: block; width: auto; height: 34px;
+  background: none;
 }
 
 /* ---------- Layout helpers ---------- */
@@ -204,11 +209,11 @@ p { color: var(--ink-soft); }
 .textarea { min-height: 140px; resize: vertical; }
 .input:focus, .select:focus, .textarea:focus {
   outline: none; border-color: var(--raspberry);
-  box-shadow: 0 0 0 3px rgba(12, 31, 66, 0.12);
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.12);
 }
-.input::placeholder, .textarea::placeholder { color: #9aa1af; }
+.input::placeholder, .textarea::placeholder { color: #8c8c8c; }
 .select {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%230c1f42' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23000000' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
   background-repeat: no-repeat; background-position: right 16px center;
   padding-right: 44px;
 }
@@ -227,6 +232,14 @@ p { color: var(--ink-soft); }
 
 /* ---------- Header — white strip per client mockup:
    links left · logo centre · icons right ---------- */
+
+/* The injected chrome wrapper must not box the header in: a sticky element
+   can only travel inside its parent, and this wrapper is only as tall as the
+   header itself (drawer + search overlay are fixed). Without this the header
+   scrolls straight off, and anything pinned below it — e.g. the collections
+   category bar — ends up floating mid-page. */
+#site-chrome-top { display: contents; }
+
 .site-header {
   position: sticky; top: 0; z-index: 120;
   background: var(--white);
@@ -242,10 +255,16 @@ p { color: var(--ink-soft); }
   grid-column: 2;
   display: inline-flex; flex-direction: column; align-items: center; gap: 1px; padding: 6px 10px;
 }
-.site-header__logo .logo-script { font-size: 34px; transform: translateY(-2px); }
+.site-header__logo .logo-mark { height: 30px; }
 .site-header__logo .logo-tag {
+  /* Hidden on the narrowest screens: the tagline is wider than the
+     wordmark and would push the bag icon off the right edge */
+  display: none;
   font-size: 7.5px; letter-spacing: 0.28em; text-transform: uppercase;
   color: var(--ink-soft); font-weight: 600; white-space: nowrap;
+}
+@media (min-width: 480px) {
+  .site-header__logo .logo-tag { display: block; }
 }
 .site-nav { display: none; grid-column: 1; justify-self: start; }
 .site-header__icons { grid-column: 3; justify-self: end; display: flex; align-items: center; gap: 2px; }
@@ -271,7 +290,10 @@ p { color: var(--ink-soft); }
 .hamburger { display: inline-flex; }
 
 @media (min-width: 900px) {
-  .site-header__inner { padding-inline: 32px; min-height: 76px; }
+  /* Keep --header-h in step with the real header height so sticky
+     elements (e.g. the collections toolbar) pin flush beneath it */
+  :root { --header-h: 76px; }
+  .site-header__inner { padding-inline: 32px; min-height: var(--header-h); }
   .hamburger { display: none; }
   .site-nav { display: flex; gap: 4px; }
   .site-nav a {
@@ -288,8 +310,16 @@ p { color: var(--ink-soft); }
   }
   .site-nav a:hover::after, .site-nav a[aria-current="page"]::after { transform: scaleX(1); }
   .site-nav a[aria-current="page"] { color: var(--raspberry); }
-  .site-header__logo .logo-script { font-size: 40px; }
+  .site-header__logo .logo-mark { height: 38px; }
   .site-header__logo .logo-tag { font-size: 8.5px; }
+}
+
+/* Four nav items don't fit either 1fr column on a narrow desktop, which
+   drags the centred logo off-centre — tighten the links until there's room. */
+@media (min-width: 900px) and (max-width: 1199px) {
+  .site-nav { gap: 0; }
+  .site-nav a { padding: 12px 9px; font-size: 11.5px; letter-spacing: 0.1em; }
+  .site-nav a::after { left: 9px; right: 9px; }
 }
 
 /* ---------- Mobile drawer ---------- */
@@ -299,7 +329,7 @@ p { color: var(--ink-soft); }
 }
 .drawer.is-open { visibility: visible; pointer-events: auto; }
 .drawer__scrim {
-  position: absolute; inset: 0; background: rgba(12, 31, 66, 0.5);
+  position: absolute; inset: 0; background: rgba(0, 0, 0, 0.5);
   opacity: 0; transition: opacity 0.3s var(--ease);
 }
 .drawer.is-open .drawer__scrim { opacity: 1; }
@@ -317,7 +347,7 @@ p { color: var(--ink-soft); }
   display: flex; align-items: center; justify-content: space-between;
   padding: 14px 12px 14px 24px; border-bottom: 1px solid var(--line-soft);
 }
-.drawer__head .logo-script { font-size: 36px; }
+.drawer__head .logo-mark { height: 30px; }
 .drawer__nav { display: flex; flex-direction: column; padding: 16px 8px; }
 .drawer__nav a {
   padding: 16px 18px;
@@ -354,7 +384,7 @@ p { color: var(--ink-soft); }
   flex: 1; min-width: 0; border: none; background: transparent; outline: none;
   font-family: var(--font-title); font-size: clamp(22px, 5vw, 34px); color: var(--navy);
 }
-.search-overlay__input::placeholder { color: #9aa1af; }
+.search-overlay__input::placeholder { color: #8c8c8c; }
 .search-overlay__close { position: absolute; top: 14px; right: 14px; }
 .search-overlay__hint {
   margin-top: 14px; font-size: 12px; letter-spacing: 0.14em;
@@ -466,7 +496,7 @@ p { color: var(--ink-soft); }
   display: grid; gap: 40px;
   padding: clamp(48px, 7vw, 80px) 0 40px;
 }
-.site-footer__brand .logo-script { color: var(--paper); font-size: 52px; }
+.site-footer__brand .logo-mark { height: 44px; }
 .site-footer__brand .logo-tag {
   display: block; margin-top: 2px;
   font-size: 9px; letter-spacing: 0.34em; text-transform: uppercase;
@@ -508,10 +538,10 @@ p { color: var(--ink-soft); }
   display: flex; align-items: center; justify-content: center;
   width: 58px; height: 58px; border-radius: 50%;
   background: #1fa855; color: var(--white);
-  box-shadow: 0 10px 30px rgba(12, 31, 66, 0.28);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
   transition: transform 0.25s var(--ease), box-shadow 0.25s var(--ease);
 }
-.wa-float:hover { transform: translateY(-3px) scale(1.04); box-shadow: 0 16px 40px rgba(12,31,66,.34); }
+.wa-float:hover { transform: translateY(-3px) scale(1.04); box-shadow: 0 16px 40px rgba(0, 0, 0,.34); }
 .wa-float svg { width: 28px; height: 28px; }
 @media (min-width: 900px) { .wa-float { right: 28px; bottom: 28px; } }
 
