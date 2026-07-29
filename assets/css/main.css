@@ -255,17 +255,9 @@ p { color: var(--ink-soft); }
   grid-column: 2;
   display: inline-flex; flex-direction: column; align-items: center; gap: 1px; padding: 6px 10px;
 }
+/* Client feedback 2026-07-28: the wordmark stands alone — no "Fine Jewelry
+   · Est. 2025" strapline under it in the header. It still runs in the footer. */
 .site-header__logo .logo-mark { height: 30px; }
-.site-header__logo .logo-tag {
-  /* Hidden on the narrowest screens: the tagline is wider than the
-     wordmark and would push the bag icon off the right edge */
-  display: none;
-  font-size: 7.5px; letter-spacing: 0.28em; text-transform: uppercase;
-  color: var(--ink-soft); font-weight: 600; white-space: nowrap;
-}
-@media (min-width: 480px) {
-  .site-header__logo .logo-tag { display: block; }
-}
 .site-nav { display: none; grid-column: 1; justify-self: start; }
 .site-header__icons { grid-column: 3; justify-self: end; display: flex; align-items: center; gap: 2px; }
 .hamburger { grid-column: 1; justify-self: start; }
@@ -311,15 +303,6 @@ p { color: var(--ink-soft); }
   .site-nav a:hover::after, .site-nav a[aria-current="page"]::after { transform: scaleX(1); }
   .site-nav a[aria-current="page"] { color: var(--raspberry); }
   .site-header__logo .logo-mark { height: 38px; }
-  .site-header__logo .logo-tag { font-size: 8.5px; }
-}
-
-/* Four nav items don't fit either 1fr column on a narrow desktop, which
-   drags the centred logo off-centre — tighten the links until there's room. */
-@media (min-width: 900px) and (max-width: 1199px) {
-  .site-nav { gap: 0; }
-  .site-nav a { padding: 12px 9px; font-size: 11.5px; letter-spacing: 0.1em; }
-  .site-nav a::after { left: 9px; right: 9px; }
 }
 
 /* ---------- Mobile drawer ---------- */

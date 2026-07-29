@@ -25,13 +25,12 @@
   };
 
   /* Client mockup 2026-07: Home · Collections · Bespoke on the left.
-     2026-07-28: Bespoke is its own page (custom orders only); general
-     inquiries live on contact.html, reached via the envelope icon. */
+     2026-07-28: Bespoke is its own page (custom orders only). No Contact
+     tab — the envelope icon is the contact affordance (client feedback). */
   var NAV = [
     { href: "index.html", label: "Home", page: "home" },
     { href: "collections.html", label: "Collections", page: "collections" },
-    { href: "bespoke.html", label: "Bespoke", page: "bespoke" },
-    { href: "contact.html", label: "Contact", page: "contact" }
+    { href: "bespoke.html", label: "Bespoke", page: "bespoke" }
   ];
 
   function current(page, item) {
@@ -52,9 +51,9 @@
           '<button class="icon-btn hamburger js-open-drawer" aria-label="Open menu" aria-expanded="false">' + ICONS.menu + "</button>" +
           '<nav class="site-nav" aria-label="Primary">' + nav + "</nav>" +
           '<a class="site-header__logo" href="index.html" aria-label="Miró — Fine Jewelry, home">' +
+            /* Client feedback 2026-07-28: the wordmark stands alone in the header */
             '<img class="logo-mark" src="assets/img/miro-logo-wordmark.png" alt="Miró" ' +
               'width="640" height="351" fetchpriority="high">' +
-            '<span class="logo-tag">Fine Jewelry · Est. 2025</span>' +
           "</a>" +
           '<div class="site-header__icons">' +
             '<button class="icon-btn js-open-search" aria-label="Search the collection">' + ICONS.search + "</button>" +

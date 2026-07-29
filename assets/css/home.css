@@ -35,12 +35,16 @@
 
 /* ---------- Featured collections — smaller, butted together,
      names in Avenir (client feedback) ---------- */
+/* Client feedback 2026-07-28: this trio must line up with the product grid
+   on the collections page. That page caps its .container at 1080px and the
+   container adds 20px of side padding, so the grid there is 1040px wide —
+   match it exactly here. */
 .collection-grid {
   grid-template-columns: repeat(3, 1fr);
-  gap: 0; max-width: 900px; margin-inline: auto;
+  gap: 0; max-width: 1040px; margin-inline: auto;
 }
-/* Heading sits on the same 900px band as the trio of images */
-.section-head--collection { max-width: 900px; margin-inline: auto; }
+/* Heading sits on the same band as the trio of images */
+.section-head--collection { max-width: 1040px; margin-inline: auto; }
 .ccard { display: block; }
 .ccard__media {
   display: block; overflow: hidden; border-radius: 0;
