@@ -343,32 +343,110 @@
   }
 
   /* ---------- Products ---------- */
+  /* Serials are assigned in catalogue order for pieces that have never been
+     opened in the editor, so the column is never blank. */
+  function pricingIndex() {
+    var P = window.MiroPricing;
+    if (!P) return { pieces: {}, priced: {} };
+    var data = P.read();
+    var priced = {};
+    Object.keys(data.pieces).forEach(function (id) {
+      var piece = data.pieces[id];
+      priced[id] = P.price(piece, {
+        settings: {
+          labourRatePerGram: piece.labourRatePerGram === "" || piece.labourRatePerGram == null
+            ? data.settings.labourRatePerGram : P.num(piece.labourRatePerGram),
+          marginPct: piece.marginPct === "" || piece.marginPct == null
+            ? data.settings.marginPct : P.num(piece.marginPct),
+          roundingStep: piece.roundingStep === "" || piece.roundingStep == null
+            ? data.settings.roundingStep : P.num(piece.roundingStep)
+        },
+        goldRate: data.goldRate
+      });
+    });
+    return { pieces: data.pieces, priced: priced };
+  }
+
   function renderProducts() {
     var body = document.querySelector(".js-products");
     if (!body) return;
-    body.innerHTML = Miro.PRODUCTS.map(function (p) {
+    var P = window.MiroPricing;
+    var idx = pricingIndex();
+    var calculated = 0;
+
+    var rows = Miro.PRODUCTS.map(function (p, i) {
       var s = stockOf(p.id);
+      var stored = idx.pieces[p.id];
+      var calc = idx.priced[p.id];
+      /* 18K is the house default read-out; the editor shows both karats. */
+      var hasCalc = !!(calc && calc.listed.k18 > 0);
+      if (hasCalc) calculated++;
+
+      var serial = stored && stored.serial
+        ? stored.serial
+        : (P ? P.serialFrom(i + 1) : "—");
+      var name = stored && stored.name ? stored.name : p.name;
+
+      var priceCell = hasCalc
+        ? '<span class="cell-strong">' + Miro.fmt(calc.listed.k18) + "</span>" +
+          '<span class="pill pill--calc">calculated</span>'
+        : '<span class="cell-strong">' + Miro.fmt(p.price) + "</span>" +
+          (p.compareAt ? ' <s class="muted">' + Miro.fmt(p.compareAt) + "</s>" : "");
+
       return (
         "<tr>" +
+          '<td data-label="Serial"><code class="serial">' + esc(serial) + "</code></td>" +
           '<td class="cell-main"><div class="prod-cell">' +
-            '<img src="' + thumb(p, 96) + '" alt="' + esc(p.name) + '" loading="lazy" width="48" height="48">' +
-            '<div><span class="prod-cell__name">' + esc(p.name) + "</span>" +
+            '<img src="' + (stored && stored.photos && stored.photos.length ? stored.photos[0] : thumb(p, 96)) +
+              '" alt="' + esc(name) + '" loading="lazy" width="48" height="48">' +
+            '<div><span class="prod-cell__name">' + esc(name) + "</span>" +
             '<span class="prod-cell__sub">' + esc(p.stone.type) + "</span></div>" +
           "</div></td>" +
-          '<td data-label="Category">' + Miro.CATEGORY_LABEL[p.category] + "</td>" +
-          '<td data-label="Price" class="num"><span class="cell-strong">' + Miro.fmt(p.price) + "</span>" +
-            (p.compareAt ? ' <s class="muted">' + Miro.fmt(p.compareAt) + "</s>" : "") + "</td>" +
+          '<td data-label="Category">' + Miro.CATEGORY_LABEL[(stored && stored.category) || p.category] + "</td>" +
+          '<td data-label="Price" class="num">' + priceCell + "</td>" +
           '<td data-label="Stock" class="num">' + s + "</td>" +
           '<td data-label="Status">' + stockPill(s) + "</td>" +
-          '<td class="cell-actions"><button type="button" class="gbtn js-demo" data-toast="Demo build — editing is disabled.">Edit</button></td>' +
+          '<td class="cell-actions"><button type="button" class="gbtn js-edit-product" data-id="' + esc(p.id) + '">Edit</button></td>' +
         "</tr>"
       );
-    }).join("");
+    });
+
+    /* Pieces created in the back office that aren't in the static catalogue */
+    Object.keys(idx.pieces).forEach(function (id) {
+      var known = Miro.PRODUCTS.some(function (p) { return p.id === id; });
+      if (known) return;
+      var piece = idx.pieces[id];
+      var calc = idx.priced[id];
+      var hasCalc = !!(calc && calc.listed.k18 > 0);
+      if (hasCalc) calculated++;
+      rows.push(
+        "<tr>" +
+          '<td data-label="Serial"><code class="serial">' + esc(piece.serial) + "</code></td>" +
+          '<td class="cell-main"><div class="prod-cell">' +
+            (piece.photos && piece.photos.length
+              ? '<img src="' + piece.photos[0] + '" alt="' + esc(piece.name) + '" width="48" height="48">'
+              : '<span class="prod-cell__ph" aria-hidden="true"></span>') +
+            '<div><span class="prod-cell__name">' + esc(piece.name) + "</span>" +
+            '<span class="prod-cell__sub">Added in the back office</span></div>' +
+          "</div></td>" +
+          '<td data-label="Category">' + esc(Miro.CATEGORY_LABEL[piece.category] || piece.category || "—") + "</td>" +
+          '<td data-label="Price" class="num">' +
+            (hasCalc ? '<span class="cell-strong">' + Miro.fmt(calc.listed.k18) + '</span><span class="pill pill--calc">calculated</span>' : "—") +
+          "</td>" +
+          '<td data-label="Stock" class="num">' + (piece.stock === "" || piece.stock == null ? "—" : esc(piece.stock)) + "</td>" +
+          '<td data-label="Status">' + stockPill(Number(piece.stock) || 0) + "</td>" +
+          '<td class="cell-actions"><button type="button" class="gbtn js-edit-product" data-id="' + esc(id) + '">Edit</button></td>' +
+        "</tr>"
+      );
+    });
+
+    body.innerHTML = rows.join("");
 
     var count = document.querySelector(".js-product-count");
     if (count) {
-      count.textContent = Miro.PRODUCTS.length + " pieces live across " + CATS.length +
-        " categories · " + Miro.COLLECTIONS.length + " collections";
+      count.textContent = rows.length + " pieces across " + CATS.length +
+        " categories · " + Miro.COLLECTIONS.length + " collections · " +
+        calculated + " priced from the calculator";
     }
   }
 
@@ -770,6 +848,9 @@
   renderOrders();
   renderCustomers();
   renderAppointments();
+
+  /* Let admin-pricing.js redraw the table after an edit */
+  window.MiroAdmin = { refreshProducts: renderProducts };
 
   window.addEventListener("hashchange", activatePanel);
   activatePanel();

@@ -204,21 +204,25 @@
 
         <!-- ============ Products ============ -->
         <section class="admin-panel js-panel" id="products" aria-label="Products" hidden>
+          <!-- Gold rate drives every calculated price (client feedback 2026-07-29) -->
+          <div class="js-goldbar"></div>
+
           <div class="panel">
             <div class="panel__bar">
               <div>
                 <h2>All pieces</h2>
                 <p class="panel__note js-product-count"></p>
               </div>
-              <button type="button" class="btn js-demo" data-toast="Demo build — editing is disabled.">
+              <button type="button" class="btn js-add-product">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg>
                 Add product
               </button>
             </div>
             <table class="atable">
-              <caption class="sr-only">Every product in the catalogue with category, price, stock and status</caption>
+              <caption class="sr-only">Every product in the catalogue with serial number, category, price, stock and status</caption>
               <thead>
                 <tr>
+                  <th scope="col">Serial</th>
                   <th scope="col">Piece</th>
                   <th scope="col">Category</th>
                   <th scope="col" class="num">Price</th>
@@ -229,7 +233,7 @@
               </thead>
               <tbody class="js-products"></tbody>
             </table>
-            <p class="panel__foot">Prices include 3% GST. Stock counts are finished pieces in the vault — demo-generated, deterministic per design.</p>
+            <p class="panel__foot">Prices include 3% GST. A price marked <em>calculated</em> comes from the piece's own pricing tab; the rest are catalogue prices. Stock counts are finished pieces in the vault.</p>
           </div>
         </section>
 
@@ -360,6 +364,8 @@
 
   <div class="toast js-toast" role="status" aria-live="polite"></div>
   <script src="assets/js/store.js"></script>
+  <script src="assets/js/pricing.js"></script>
   <script src="assets/js/admin.js"></script>
+  <script src="assets/js/admin-pricing.js"></script>
 </body>
 </html>
