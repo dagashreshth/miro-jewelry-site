@@ -26,16 +26,28 @@
   /* ---------- Instagram gallery ---------- */
   var instaWrap = document.querySelector(".js-instagram");
   if (instaWrap) {
-    /* Client feedback: solid, gapless grid of 5 editorial images */
-    instaWrap.innerHTML = Miro.EDITORIAL.instagram.slice(0, 5).map(function (im, i) {
+    /* Client feedback: solid, gapless grid of 5 editorial images.
+       Each tile opens its own post when the back office has supplied a
+       link; otherwise it falls back to the profile. */
+    var posts = Miro.EDITORIAL.instagram.slice(0, 5);
+    instaWrap.style.setProperty("--insta-cols", String(Math.max(1, posts.length)));
+    instaWrap.innerHTML = posts.map(function (im, i) {
+      var href = im.url || MiroLinks.instagram;
+      var label = im.url
+        ? "Open this Miró post on Instagram"
+        : "Open Miró on Instagram — post " + (i + 1);
       return (
-        '<a href="' + MiroLinks.instagram + '" target="_blank" rel="noopener" aria-label="Open Miró on Instagram — post ' + (i + 1) + '">' +
+        '<a href="' + href + '" target="_blank" rel="noopener" aria-label="' + label + '">' +
           '<img src="' + Miro.img(im.id, 600, "&fit=crop&ar=1:1") + '" alt="Miró on Instagram — editorial jewelry photograph ' + (i + 1) + '" loading="lazy" width="600" height="600">' +
           '<span class="insta__veil">' + MiroIcons.instagram + "</span>" +
         "</a>"
       );
     }).join("");
   }
+
+  /* Keep the "Follow Miró" button on the one handle the chrome uses */
+  var followBtn = document.querySelector(".js-follow-ig");
+  if (followBtn && window.MiroLinks) followBtn.href = MiroLinks.instagram;
 
   /* Re-run reveal binding for injected nodes */
   if (window.IntersectionObserver) {

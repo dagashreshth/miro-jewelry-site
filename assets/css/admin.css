@@ -685,7 +685,7 @@
 .stones__scroll { overflow-x: auto; }
 /* Wide enough that every control keeps its label legible — the wrapper
    scrolls horizontally rather than crushing the selects. */
-.stones__table { min-width: 1180px; }
+.stones__table { min-width: 1310px; }
 .stones__table .input, .stones__table .select { min-height: 44px; padding: 8px 10px; font-size: 14px; }
 .stones__table .select { padding-right: 30px; background-position: right 10px center; }
 .stones__table .input.num { text-align: right; }
@@ -694,11 +694,12 @@
 .stones__table th:nth-child(2), .stones__table td:nth-child(2),
 .stones__table th:nth-child(3), .stones__table td:nth-child(3),
 .stones__table th:nth-child(4), .stones__table td:nth-child(4) { min-width: 140px; }
-.stones__table th:nth-child(5), .stones__table td:nth-child(5),
-.stones__table th:nth-child(7), .stones__table td:nth-child(7) { min-width: 110px; }
-.stones__table th:nth-child(6), .stones__table td:nth-child(6) { min-width: 92px; }
-.stones__table th:nth-child(8), .stones__table td:nth-child(8) { min-width: 92px; }
-.stones__table th:nth-child(9), .stones__table td:nth-child(9) { min-width: 120px; }
+.stones__table th:nth-child(5), .stones__table td:nth-child(5) { min-width: 100px; }
+.stones__table th:nth-child(6), .stones__table td:nth-child(6),
+.stones__table th:nth-child(8), .stones__table td:nth-child(8) { min-width: 110px; }
+.stones__table th:nth-child(7), .stones__table td:nth-child(7) { min-width: 92px; }
+.stones__table th:nth-child(9), .stones__table td:nth-child(9) { min-width: 92px; }
+.stones__table th:nth-child(10), .stones__table td:nth-child(10) { min-width: 120px; }
 .js-st-totalct, .js-st-value { font-variant-numeric: tabular-nums; color: var(--navy); font-weight: 600; }
 
 /* ---------- Summary ---------- */
@@ -769,3 +770,57 @@
   text-transform: uppercase; color: var(--teal);
 }
 .goldfeed--matched { background: var(--teal-tint); }
+
+/* ---------- Diamond Inventory + Journal + Publish (2026-07-31) ---------- */
+.panel__bar-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.panel__actions {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 14px 18px;
+  margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line-soft);
+}
+.panel__actions .panel__foot { margin: 0; }
+
+.dia-table { min-width: 940px; }
+.dia-table .input, .dia-table .select { min-height: 44px; padding: 8px 10px; font-size: 14px; }
+.dia-table .input.num { text-align: right; }
+.dia-table th:nth-child(1), .dia-table td:nth-child(1) { min-width: 90px; }
+.dia-table th:nth-child(2), .dia-table td:nth-child(2) { min-width: 130px; }
+.dia-table th:nth-child(3), .dia-table td:nth-child(3),
+.dia-table th:nth-child(5), .dia-table td:nth-child(5) { min-width: 130px; }
+.dia-table th:nth-child(4), .dia-table td:nth-child(4) { min-width: 150px; }
+.dia-table th:nth-child(6), .dia-table td:nth-child(6) { min-width: 150px; }
+
+/* Rate read from the inventory, shown in place of the manual field */
+.st-rate {
+  display: inline-block; font-variant-numeric: tabular-nums;
+  font-weight: 600; color: var(--navy);
+}
+.st-rate--near { border-bottom: 1px dashed var(--line); cursor: help; }
+.st-rate--missing { color: var(--copper); font-weight: 500; }
+
+/* Journal rows */
+.igrow {
+  display: grid; gap: 14px; align-items: start;
+  padding: 16px 0; border-bottom: 1px solid var(--line-soft);
+}
+.igrow:last-child { border-bottom: 0; }
+.igrow__thumb {
+  width: 72px; height: 72px; flex: none;
+  background: var(--cream); border-radius: var(--radius); overflow: hidden;
+}
+.igrow__thumb img { width: 100%; height: 100%; object-fit: cover; }
+.igrow__fields { display: grid; gap: 12px; min-width: 0; }
+.igrow__fields .js-ig-file { font-size: 12.5px; }
+.igrow__actions { display: flex; flex-wrap: wrap; gap: 8px; }
+@media (min-width: 760px) {
+  .igrow { grid-template-columns: 72px minmax(0, 1fr) auto; gap: 18px; }
+  .igrow__fields { grid-template-columns: 1fr 1fr; }
+  .igrow__actions { flex-direction: column; }
+}
+
+/* Photo order controls */
+.photo__pos {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--navy);
+}
+.photo__moves { display: inline-flex; flex-wrap: wrap; gap: 5px; }
+.photo .gbtn[disabled] { opacity: 0.35; pointer-events: none; }

@@ -83,8 +83,11 @@
 }
 
 /* ---------- Instagram gallery — solid, gapless, full-bleed ---------- */
+/* Column count follows however many posts the back office published, so a
+   short journal still fills the row instead of leaving a gap. */
 .insta {
-  display: grid; grid-template-columns: repeat(2, 1fr); gap: 0;
+  display: grid; gap: 0;
+  grid-template-columns: repeat(min(var(--insta-cols, 5), 2), 1fr);
 }
 .insta a {
   position: relative; display: block; overflow: hidden;
@@ -107,4 +110,6 @@
   background: rgba(0, 0, 0, 0.45); color: var(--paper);
 }
 .insta__veil svg { width: 26px; height: 26px; }
-@media (min-width: 700px) { .insta { grid-template-columns: repeat(5, 1fr); } }
+@media (min-width: 700px) {
+  .insta { grid-template-columns: repeat(var(--insta-cols, 5), 1fr); }
+}

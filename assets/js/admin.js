@@ -727,6 +727,8 @@
     products: { t: "Products", s: "Every live piece in the catalogue — pricing, stock and status at a glance." },
     categories: { t: "Categories", s: "The four rooms of the maison, and the three collections stitched across them." },
     banners: { t: "Banners", s: "The imagery currently fronting the storefront — swap artwork without touching code." },
+    diamonds: { t: "Diamond Inventory", s: "The rate card every diamond is priced from — carat weight, clarity, shape and charni size." },
+    journal: { t: "Journal", s: "The Instagram posts shown in “From the journal” on the homepage." },
     inventory: { t: "Inventory", s: "Finished-piece stock against the atelier target of fourteen per design." },
     orders: { t: "Orders", s: "Every order placed through the storefront, from first click to doorstep." },
     customers: { t: "Customers", s: "The client book — lifetime value, pieces owned and most recent visits." },

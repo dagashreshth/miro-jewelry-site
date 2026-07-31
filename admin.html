@@ -63,6 +63,14 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="1.5"/><circle cx="8.6" cy="10" r="1.5"/><path d="m3 16.5 4.8-3.8 3.1 2.6 4.3-4.3L21 16.5" stroke-linejoin="round"/></svg>
           Banners
         </a>
+        <a href="#diamonds" data-nav="diamonds">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6 3h12l3.5 5.5L12 21 2.5 8.5 6 3Z" stroke-linejoin="round"/><path d="M2.5 8.5h19M9 3l-1.5 5.5L12 21M15 3l1.5 5.5L12 21"/></svg>
+          Diamond Inventory
+        </a>
+        <a href="#journal" data-nav="journal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" fill="currentColor" stroke="none"/></svg>
+          Journal
+        </a>
         <a href="#inventory" data-nav="inventory">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3.5 7.6 12 3.2l8.5 4.4v8.8L12 20.8l-8.5-4.4V7.6Z" stroke-linejoin="round"/><path d="M3.5 7.6 12 12l8.5-4.4M12 12v8.8"/></svg>
           Inventory
@@ -213,10 +221,13 @@
                 <h2>All pieces</h2>
                 <p class="panel__note js-product-count"></p>
               </div>
-              <button type="button" class="btn js-add-product">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg>
-                Add product
-              </button>
+              <div class="panel__bar-actions">
+                <button type="button" class="gbtn js-publish">Publish to live site</button>
+                <button type="button" class="btn js-add-product">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg>
+                  Add product
+                </button>
+              </div>
             </div>
             <table class="atable">
               <caption class="sr-only">Every product in the catalogue with serial number, category, price, stock and status</caption>
@@ -267,6 +278,64 @@
             </div>
             <ul class="banrows js-banners" role="list"></ul>
             <p class="panel__foot">Artwork is served from the CDN at responsive widths. In production, replacing a banner here updates the storefront instantly — no deploy needed.</p>
+          </div>
+        </section>
+
+        <!-- ============ Diamond Inventory (client request 2026-07-31) ============ -->
+        <section class="admin-panel js-panel" id="diamonds" aria-label="Diamond Inventory" hidden>
+          <div class="panel">
+            <div class="panel__bar">
+              <div>
+                <h2>Diamond rate card</h2>
+                <p class="panel__note">Every diamond price per carat lives here. A piece reads its rate from this table, so a change updates every product that uses it.</p>
+              </div>
+              <button type="button" class="btn js-dia-add">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg>
+                Add row
+              </button>
+            </div>
+            <div class="stones__scroll">
+              <table class="atable dia-table">
+                <caption class="sr-only">Diamond rate card by carat weight, clarity, shape and charni size</caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Sr. no</th>
+                    <th scope="col" class="num">Diamond CTW</th>
+                    <th scope="col">Clarity</th>
+                    <th scope="col">Shape</th>
+                    <th scope="col">Charni size</th>
+                    <th scope="col" class="num">Price per CTW</th>
+                    <th scope="col"><span class="sr-only">Actions</span></th>
+                  </tr>
+                </thead>
+                <tbody class="js-dia-rows"></tbody>
+              </table>
+            </div>
+            <div class="panel__actions">
+              <button type="button" class="btn btn--sm js-dia-save">Save rate card</button>
+              <p class="panel__foot js-dia-note"></p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============ Journal / Instagram (client request 2026-07-31) ============ -->
+        <section class="admin-panel js-panel" id="journal" aria-label="Journal" hidden>
+          <div class="panel">
+            <div class="panel__bar">
+              <div>
+                <h2>From the journal</h2>
+                <p class="panel__note">The five tiles on the homepage. Paste an Instagram post link and its image, newest first.</p>
+              </div>
+              <button type="button" class="btn js-ig-add">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg>
+                Add post
+              </button>
+            </div>
+            <div class="js-ig-rows"></div>
+            <div class="panel__actions">
+              <button type="button" class="btn btn--sm js-ig-save">Save journal</button>
+              <p class="panel__foot">Saved here, then pushed live with <strong>Publish to live site</strong> on the Products page.</p>
+            </div>
           </div>
         </section>
 
@@ -363,9 +432,11 @@
   </div>
 
   <div class="toast js-toast" role="status" aria-live="polite"></div>
+  <script src="assets/data/catalog.js"></script>
   <script src="assets/js/store.js"></script>
   <script src="assets/js/pricing.js"></script>
   <script src="assets/js/admin.js"></script>
   <script src="assets/js/admin-pricing.js"></script>
+  <script src="assets/js/admin-catalog.js"></script>
 </body>
 </html>

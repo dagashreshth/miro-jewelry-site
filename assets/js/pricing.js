@@ -43,7 +43,11 @@
          The client asked for 995 fine; retail pages quote 24K at 999. */
       feedBasis: "k24_995"
     },
-    pieces: {}
+    pieces: {},
+    /* Diamond Inventory — the rate card a stone's ₹/carat is read from, so
+       the price per carat is maintained in one place instead of per piece.
+       Rows: { srNo, ctw, clarity, shape, charni, pricePerCtw } */
+    diamonds: []
   };
 
   var SHAPES = ["Round", "Pear", "Emerald", "Oval", "Baguette", "Cushion",
@@ -75,6 +79,7 @@
       });
     }
     if (data.pieces && typeof data.pieces === "object") out.pieces = data.pieces;
+    if (Array.isArray(data.diamonds)) out.diamonds = data.diamonds;
     return out;
   }
 
@@ -126,38 +131,92 @@
     return (now || new Date()).getTime() < until.getTime();
   }
 
+  /* ---------- Diamond Inventory lookup ----------
+     A diamond's ₹/carat comes from the inventory rather than being typed on
+     the piece. We match on shape and clarity, then take the inventory row
+     whose carat weight is nearest the stone being priced. Charni size, when
+     both sides state one, must agree — it is a sizing grade, not a
+     preference. Returns null when nothing matches, so the caller can show
+     "no rate" instead of silently pricing a stone at zero. */
+  function norm(v) { return String(v == null ? "" : v).trim().toLowerCase(); }
+
+  function isBlankCharni(v) {
+    var s = norm(v);
+    return s === "" || s === "n/a" || s === "na" || s === "-";
+  }
+
+  function diamondRate(row, diamonds) {
+    var list = Array.isArray(diamonds) ? diamonds : read().diamonds;
+    if (!list || !list.length) return null;
+
+    var shape = norm(row && row.shape);
+    var clarity = norm(row && row.quality);
+    var charni = row && row.charni;
+    var want = num(row && row.perStoneCt);
+
+    var candidates = list.filter(function (d) {
+      if (!(num(d.pricePerCtw) > 0)) return false;
+      if (shape && norm(d.shape) && norm(d.shape) !== shape) return false;
+      if (clarity && norm(d.clarity) && norm(d.clarity) !== clarity) return false;
+      if (!isBlankCharni(charni) && !isBlankCharni(d.charni) && norm(d.charni) !== norm(charni)) return false;
+      return true;
+    });
+    if (!candidates.length) return null;
+
+    var best = null, bestGap = Infinity;
+    candidates.forEach(function (d) {
+      var gap = Math.abs(num(d.ctw) - want);
+      if (gap < bestGap) { bestGap = gap; best = d; }
+    });
+    if (!best) return null;
+    return { rate: num(best.pricePerCtw), row: best, exact: bestGap < 0.0005 };
+  }
+
   /* ---------- Core calculation ---------- */
-  function stoneRow(row) {
+  /* A diamond row prices from the inventory; any other stone keeps the
+     per-carat figure entered on the piece. */
+  function rateFor(row, diamonds) {
+    if (norm(row && row.type) === "diamond") {
+      var hit = diamondRate(row, diamonds);
+      return hit ? hit.rate : 0;
+    }
+    return num(row && row.perCaratPrice);
+  }
+
+  function stoneRow(row, diamonds) {
     var perStoneCt = num(row && row.perStoneCt);
     var qty = num(row && row.qty);
-    var perCaratPrice = num(row && row.perCaratPrice);
     var totalCt = perStoneCt * qty;
     return {
       totalCt: totalCt,
-      value: totalCt * perCaratPrice
+      rate: rateFor(row, diamonds),
+      value: totalCt * rateFor(row, diamonds)
     };
   }
 
-  function stoneTotals(stones) {
+  function stoneTotals(stones, diamonds) {
     var list = Array.isArray(stones) ? stones : [];
     return list.reduce(function (acc, row) {
-      var r = stoneRow(row);
+      var r = stoneRow(row, diamonds);
       acc.count += num(row && row.qty);
       acc.carats += r.totalCt;
       acc.value += r.value;
+      /* Surfaced so the editor can warn instead of quietly pricing at zero */
+      if (norm(row && row.type) === "diamond" && r.totalCt > 0 && !(r.rate > 0)) acc.unpriced++;
       return acc;
-    }, { count: 0, carats: 0, value: 0 });
+    }, { count: 0, carats: 0, value: 0, unpriced: 0 });
   }
 
   /* piece: { goldGrams, stones[] }
      opts:  { settings, goldRate } — both optional, read from the store. */
   function price(piece, opts) {
     opts = opts || {};
-    var store = (opts.settings && opts.goldRate) ? null : read();
+    var store = (opts.settings && opts.goldRate && opts.diamonds) ? null : read();
     var settings = opts.settings || store.settings;
     var rates = karatRates(opts.goldRate || store.goldRate);
+    var diamonds = opts.diamonds || (store ? store.diamonds : read().diamonds);
 
-    var stones = stoneTotals(piece && piece.stones);
+    var stones = stoneTotals(piece && piece.stones, diamonds);
     var grams = num(piece && piece.goldGrams);
 
     var labour = grams * num(settings.labourRatePerGram);
@@ -218,6 +277,7 @@
     karatRates: karatRates,
     nextLockBoundary: nextLockBoundary,
     isLocked: isLocked,
+    diamondRate: diamondRate,
     stoneRow: stoneRow,
     stoneTotals: stoneTotals,
     price: price,

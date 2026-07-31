@@ -8,10 +8,16 @@
 
   /* ---------- Image helper (Unsplash CDN, imgix params) ----------
      img(id, w)            -> product-quality crop at width w
-     img(id, w, extra)     -> extra imgix params, e.g. detail zoom crops   */
+     img(id, w, extra)     -> extra imgix params, e.g. detail zoom crops
+
+     A photograph uploaded through the back office arrives as a data URL or
+     an ordinary link rather than an Unsplash id — pass those straight
+     through so every call site keeps working unchanged. */
   function img(id, w, extra) {
+    var value = String(id == null ? "" : id);
+    if (/^(data:|blob:|https?:\/\/|\/|\.\/|\.\.\/)/.test(value)) return value;
     return (
-      "https://images.unsplash.com/photo-" + id +
+      "https://images.unsplash.com/photo-" + value +
       "?w=" + (w || 1000) + "&q=80&auto=format" + (extra || "")
     );
   }
@@ -714,6 +720,75 @@
       { id: LIFE.neckLayers }
     ]
   };
+
+  /* ============================================================
+     Published overrides (assets/data/catalog.js)
+
+     The back office writes window.MiroCatalog and publishes it to the repo,
+     which is how an edit made in the dashboard reaches the live storefront.
+     It is layered over the static catalogue rather than replacing it, so a
+     partial or missing file simply leaves the built-in data in place.
+     ============================================================ */
+  var CATALOG = window.MiroCatalog && typeof window.MiroCatalog === "object" ? window.MiroCatalog : null;
+
+  function applyCatalog() {
+    if (!CATALOG) return;
+
+    var pieces = CATALOG.pieces && typeof CATALOG.pieces === "object" ? CATALOG.pieces : {};
+    Object.keys(pieces).forEach(function (id) {
+      var patch = pieces[id] || {};
+      var existing = null;
+      for (var i = 0; i < PRODUCTS.length; i++) {
+        if (PRODUCTS[i].id === id) { existing = PRODUCTS[i]; break; }
+      }
+
+      var photos = Array.isArray(patch.photos) ? patch.photos.filter(Boolean) : null;
+      var images = photos && photos.length ? photos.map(function (src) { return { id: src }; }) : null;
+
+      if (existing) {
+        if (patch.name) existing.name = patch.name;
+        if (patch.category) existing.category = patch.category;
+        if (patch.collection !== undefined) existing.collection = patch.collection;
+        if (patch.description) existing.description = patch.description;
+        if (typeof patch.price === "number" && patch.price > 0) existing.price = patch.price;
+        if (typeof patch.instock === "boolean") existing.instock = patch.instock;
+        if (images) existing.images = images;
+        if (patch.serial) existing.serial = patch.serial;
+        return;
+      }
+
+      /* A piece created in the back office — only publish it once it has
+         enough to render a listing card without breaking the storefront. */
+      if (!patch.name || !images) return;
+      PRODUCTS.push({
+        id: id,
+        name: patch.name,
+        category: patch.category || "rings",
+        collection: patch.collection || "",
+        price: typeof patch.price === "number" ? patch.price : 0,
+        compareAt: null,
+        badge: null,
+        instock: patch.instock !== false,
+        serial: patch.serial || "",
+        stone: { type: patch.stoneType || "", ctw: patch.stoneCtw || "" },
+        metals: [],
+        metalWeight: "",
+        sizes: [],
+        description: patch.description || "",
+        details: [],
+        images: images
+      });
+    });
+
+    if (Array.isArray(CATALOG.instagram) && CATALOG.instagram.length) {
+      EDITORIAL.instagram = CATALOG.instagram
+        .filter(function (post) { return post && (post.image || post.id); })
+        .map(function (post) {
+          return { id: post.image || post.id, url: post.url || "" };
+        });
+    }
+  }
+  applyCatalog();
 
   /* ---------- Money ---------- */
   function fmt(n) {

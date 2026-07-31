@@ -10,7 +10,7 @@
 
   var WA_LINK = "https://wa.me/919820012345?text=" +
     encodeURIComponent("Hello Miró — I'd like some help with a piece.");
-  var IG_LINK = "https://instagram.com/miro.finejewelry";
+  var IG_LINK = "https://www.instagram.com/mirofinejewelry";
 
   var ICONS = {
     search: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.8-3.8" stroke-linecap="round"/></svg>',
@@ -75,7 +75,7 @@
           '<nav class="drawer__nav" aria-label="Mobile">' + drawerNav + "</nav>" +
           '<div class="drawer__foot">' +
             '<a href="' + WA_LINK + '" target="_blank" rel="noopener">' + ICONS.whatsapp + " WhatsApp concierge</a>" +
-            '<a href="' + IG_LINK + '" target="_blank" rel="noopener">' + ICONS.instagram + " @miro.finejewelry</a>" +
+            '<a href="' + IG_LINK + '" target="_blank" rel="noopener">' + ICONS.instagram + " @mirofinejewelry</a>" +
             '<a href="contact.html">' + ICONS.pin + " Kala Ghoda atelier, Mumbai</a>" +
           "</div>" +
         "</div>" +

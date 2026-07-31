@@ -227,7 +227,7 @@
   var editing = null;   /* { id, piece } */
 
   function blankStone() {
-    return { label: "", type: "Diamond", shape: "Round", quality: "GH/VS", perStoneCt: "", perCaratPrice: "", qty: "" };
+    return { label: "", type: "Diamond", shape: "Round", quality: "GH/VS", charni: "", perStoneCt: "", perCaratPrice: "", qty: "" };
   }
 
   /* A piece record, seeded from the catalogue entry when one exists.
@@ -278,6 +278,9 @@
     }).join("");
   }
 
+  /* Client request 2026-07-31: a diamond's ₹/carat is no longer typed here —
+     it is read from the Diamond Inventory. Coloured stones have no rate card,
+     so they keep the manual field. */
   function stoneRowHTML(row, i) {
     return (
       '<tr class="stone-row" data-i="' + i + '">' +
@@ -285,9 +288,13 @@
         '<td data-label="Stone"><select class="select js-st-type">' + optionList(P.STONE_TYPES, row.type) + "</select></td>" +
         '<td data-label="Shape"><select class="select js-st-shape">' + optionList(P.SHAPES, row.shape) + "</select></td>" +
         '<td data-label="Colour/Clarity"><input class="input js-st-quality" type="text" value="' + esc(row.quality) + '" placeholder="GH/VS"></td>' +
+        '<td data-label="Charni"><input class="input js-st-charni" type="text" value="' + esc(row.charni || "") + '" placeholder="+2"></td>' +
         '<td data-label="Ct / stone" class="num"><input class="input num js-st-ct" type="number" min="0" step="0.001" value="' + esc(row.perStoneCt) + '"></td>' +
         '<td data-label="Stones" class="num"><input class="input num js-st-qty" type="number" min="0" step="1" value="' + esc(row.qty) + '"></td>' +
-        '<td data-label="₹ / carat" class="num"><input class="input num js-st-rate" type="number" min="0" step="0.01" value="' + esc(row.perCaratPrice) + '"></td>' +
+        '<td data-label="₹ / carat" class="num js-st-ratecell">' +
+          '<input class="input num js-st-rate" type="number" min="0" step="0.01" value="' + esc(row.perCaratPrice) + '">' +
+          '<span class="st-rate js-st-rateauto" hidden></span>' +
+        "</td>" +
         '<td data-label="Total ct" class="num js-st-totalct">—</td>' +
         '<td data-label="Value" class="num js-st-value">—</td>' +
         '<td class="cell-actions"><button type="button" class="gbtn js-st-remove" aria-label="Remove this stone row">Remove</button></td>' +
@@ -396,6 +403,7 @@
         type: tr.querySelector(".js-st-type").value,
         shape: tr.querySelector(".js-st-shape").value,
         quality: tr.querySelector(".js-st-quality").value,
+        charni: tr.querySelector(".js-st-charni").value,
         perStoneCt: tr.querySelector(".js-st-ct").value,
         qty: tr.querySelector(".js-st-qty").value,
         perCaratPrice: tr.querySelector(".js-st-rate").value
@@ -424,12 +432,37 @@
   function recalc(root) {
     var piece = readPieceFromDOM(root);
     var eff = effectiveSettings(piece);
-    var gold = P.read().goldRate;
-    var r = P.price(piece, { settings: eff, goldRate: gold });
+    var store = P.read();
+    var gold = store.goldRate;
+    var diamonds = store.diamonds;
+    var r = P.price(piece, { settings: eff, goldRate: gold, diamonds: diamonds });
 
-    /* Per-row echo */
+    /* Per-row echo. Diamonds show the rate the inventory supplied and hide
+       the manual field, so there is one place a diamond price comes from. */
     [].slice.call(root.querySelectorAll(".stone-row")).forEach(function (tr, i) {
-      var row = P.stoneRow(piece.stones[i]);
+      var data = piece.stones[i];
+      var row = P.stoneRow(data, diamonds);
+      var isDiamond = String(data.type || "").toLowerCase() === "diamond";
+      var input = tr.querySelector(".js-st-rate");
+      var auto = tr.querySelector(".js-st-rateauto");
+
+      input.hidden = isDiamond;
+      auto.hidden = !isDiamond;
+      if (isDiamond) {
+        var hit = P.diamondRate(data, diamonds);
+        if (hit) {
+          auto.textContent = money(hit.rate);
+          auto.className = "st-rate js-st-rateauto" + (hit.exact ? "" : " st-rate--near");
+          auto.title = hit.exact
+            ? "From the Diamond Inventory"
+            : "Nearest inventory row: " + dec(P.num(hit.row.ctw), 3) + " ct " + (hit.row.shape || "") + " " + (hit.row.clarity || "");
+        } else {
+          auto.textContent = "no rate";
+          auto.className = "st-rate js-st-rateauto st-rate--missing";
+          auto.title = "Nothing in the Diamond Inventory matches this shape, clarity and charni";
+        }
+      }
+
       tr.querySelector(".js-st-totalct").textContent = row.totalCt ? dec(row.totalCt, 3) : "—";
       tr.querySelector(".js-st-value").textContent = row.value ? money(row.value) : "—";
     });
@@ -439,6 +472,10 @@
 
     root.querySelector(".js-psummary").innerHTML =
       (noRate ? '<p class="psummary__warn">No gold rate set yet — metal cost is counted as zero. Set the 995 rate on the Products page.</p>' : "") +
+      (r.stones.unpriced
+        ? '<p class="psummary__warn">' + r.stones.unpriced + " diamond row" + (r.stones.unpriced === 1 ? " has" : "s have") +
+          " no matching rate in the Diamond Inventory — counted as zero until a rate exists.</p>"
+        : "") +
       '<table class="psum">' +
         "<caption>Cost breakdown</caption>" +
         "<thead><tr><th scope=\"col\">Line</th><th scope=\"col\" class=\"num\">14K</th><th scope=\"col\" class=\"num\">18K</th></tr></thead>" +
@@ -467,12 +504,23 @@
       grid.innerHTML = '<p class="photos__empty">No photographs yet.</p>';
       return;
     }
+    /* Client request 2026-07-31: the order photographs appear in on the
+       listing is hers to set — first is the one the storefront leads with. */
+    var last = editing.piece.photos.length - 1;
     grid.innerHTML = editing.piece.photos.map(function (src, i) {
       return (
         '<figure class="photo' + (i === 0 ? " is-primary" : "") + '">' +
           '<img src="' + src + '" alt="Photograph ' + (i + 1) + '">' +
-          '<figcaption>' + (i === 0 ? "<span>Primary</span>" : '<button type="button" class="gbtn js-photo-primary" data-i="' + i + '">Make primary</button>') +
-            '<button type="button" class="gbtn js-photo-remove" data-i="' + i + '">Remove</button></figcaption>' +
+          '<figcaption>' +
+            '<span class="photo__pos">' + (i === 0 ? "Primary" : "#" + (i + 1)) + "</span>" +
+            '<span class="photo__moves">' +
+              '<button type="button" class="gbtn js-photo-move" data-i="' + i + '" data-dir="-1"' +
+                (i === 0 ? " disabled" : "") + ' aria-label="Move photograph ' + (i + 1) + ' earlier">←</button>' +
+              '<button type="button" class="gbtn js-photo-move" data-i="' + i + '" data-dir="1"' +
+                (i === last ? " disabled" : "") + ' aria-label="Move photograph ' + (i + 1) + ' later">→</button>' +
+              '<button type="button" class="gbtn js-photo-remove" data-i="' + i + '" aria-label="Remove photograph ' + (i + 1) + '">Remove</button>' +
+            "</span>" +
+          "</figcaption>" +
         "</figure>"
       );
     }).join("");
@@ -619,12 +667,15 @@
         return;
       }
 
-      var mkPrimary = e.target.closest(".js-photo-primary");
-      if (mkPrimary) {
-        var pi = parseInt(mkPrimary.getAttribute("data-i"), 10);
-        var moved = editing.piece.photos.splice(pi, 1)[0];
-        editing.piece.photos.unshift(moved);
-        renderPhotos(root);
+      var move = e.target.closest(".js-photo-move");
+      if (move) {
+        var from = parseInt(move.getAttribute("data-i"), 10);
+        var to = from + parseInt(move.getAttribute("data-dir"), 10);
+        if (to >= 0 && to < editing.piece.photos.length) {
+          var shifted = editing.piece.photos.splice(from, 1)[0];
+          editing.piece.photos.splice(to, 0, shifted);
+          renderPhotos(root);
+        }
         return;
       }
 
@@ -678,6 +729,9 @@
     if (edit) openEditor(edit.getAttribute("data-id"));
   });
 
+  /* Shared so admin-catalog.js can reuse the same dialog shell */
+  window.MiroModal = openModal;
+  window.MiroModalClose = closeModal;
   window.MiroAdminPricing = { renderGoldStrip: renderGoldStrip, openEditor: openEditor };
   renderGoldStrip();
   loadFeed();
