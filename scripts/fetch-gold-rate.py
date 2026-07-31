@@ -120,6 +120,24 @@ def main():
         print("gold rate NOT updated: could not fetch the page (%s)" % err, file=sys.stderr)
         return 1
 
+    # Leave the file alone when the rate itself hasn't moved. `fetchedAt`
+    # changes on every run, so rewriting unconditionally would produce a
+    # commit — and a site rebuild — every single day for no reason.
+    if os.path.exists(args.out):
+        try:
+            with open(args.out, encoding="utf-8") as handle:
+                previous = json.load(handle)
+            unchanged = (
+                previous.get("rateDate") == data["rateDate"]
+                and previous.get("perGram") == data["perGram"]
+            )
+            if unchanged:
+                print("%s — unchanged at 24K ₹%s/g, leaving the file as is"
+                      % (data["rateDate"], data["perGram"]["k24_999"]))
+                return 0
+        except (ValueError, OSError):
+            pass  # unreadable previous file — fall through and rewrite it
+
     os.makedirs(os.path.dirname(args.out) or ".", exist_ok=True)
     with open(args.out, "w", encoding="utf-8") as handle:
         json.dump(data, handle, indent=2, ensure_ascii=False)
