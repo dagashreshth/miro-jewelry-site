@@ -39,6 +39,53 @@
   }
 
   /* ============================================================
+     Daily rate feed
+     A scheduled job commits assets/data/gold-rate.json. It is offered as a
+     suggestion rather than applied automatically — the published figure is a
+     retail quote, and the client still has to confirm it reflects her cost.
+     ============================================================ */
+  var feed = null;
+
+  function feedRate(f) {
+    if (!f || !f.perGram) return 0;
+    var basis = P.read().settings.feedBasis || "k24_995";
+    return P.num(f.perGram[basis]);
+  }
+
+  function loadFeed() {
+    if (!window.fetch) return;
+    fetch("assets/data/gold-rate.json", { cache: "no-store" })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (json) {
+        if (!json || !json.perGram) return;
+        feed = json;
+        renderGoldStrip();
+      })
+      .catch(function () { /* no feed committed yet — manual entry still works */ });
+  }
+
+  function feedHTML() {
+    if (!feed) return "";
+    var suggested = feedRate(feed);
+    if (!(suggested > 0)) return "";
+    var current = P.num(P.read().goldRate.rate24k);
+    var same = Math.abs(current - suggested) < 0.5;
+    var basis = P.read().settings.feedBasis === "k24_999" ? "24K as published" : "995 fine";
+
+    return (
+      '<div class="goldfeed' + (same ? " goldfeed--matched" : "") + '">' +
+        '<p class="goldfeed__text">' +
+          "<strong>" + esc(feed.source || "Feed") + "</strong> · " + esc(feed.city || "") + " " +
+          esc(feed.rateDate || "") + " — " + money(suggested) + "/g <span>(" + esc(basis) + ")</span>" +
+        "</p>" +
+        (same
+          ? '<p class="goldfeed__ok">In use</p>'
+          : '<button type="button" class="gbtn js-gold-apply-feed">Use this rate</button>') +
+      "</div>"
+    );
+  }
+
+  /* ============================================================
      Gold rate strip
      ============================================================ */
   function goldStripHTML() {
@@ -67,13 +114,30 @@
             : (hasRate ? '<p class="goldbar__lock goldbar__lock--open">Lock expired — refresh the rate</p>' : "")) +
         "</div>" +
         '<button type="button" class="btn btn--sm js-gold-edit">' + (hasRate ? "Update rate" : "Set rate") + "</button>" +
-      "</div>"
+      "</div>" +
+      feedHTML()
     );
   }
 
   function renderGoldStrip() {
     var host = document.querySelector(".js-goldbar");
     if (host) host.innerHTML = goldStripHTML();
+  }
+
+  /* Apply the fed rate exactly as a manual entry would — same lock, same
+     recalculation — so there is one code path for "the rate changed". */
+  function applyFeedRate() {
+    var suggested = feedRate(feed);
+    if (!(suggested > 0)) return;
+    var d = P.read();
+    d.goldRate.rate24k = suggested;
+    d.goldRate.updatedAt = new Date().toISOString();
+    d.goldRate.lockedUntil = P.nextLockBoundary(new Date(), d.goldRate.lockHour).toISOString();
+    d.goldRate.source = (feed.source || "feed");
+    if (!P.write(d)) { toast("Couldn't save — browser storage is full."); return; }
+    renderGoldStrip();
+    if (window.MiroAdmin && window.MiroAdmin.refreshProducts) window.MiroAdmin.refreshProducts();
+    toast("Rate applied from " + esc(feed.source || "feed") + " — every piece repriced.");
   }
 
   function openGoldDialog() {
@@ -117,6 +181,12 @@
           '<label class="pfield"><span>Round listed price up to</span>' +
             '<input class="input js-s-round" type="number" min="0" step="100" value="' + P.num(s.roundingStep) + '"><small>Nearest ₹. 0 = no rounding.</small></label>' +
         "</div>" +
+        '<label class="pfield"><span>Daily feed applies</span>' +
+          '<select class="select js-s-basis">' +
+            '<option value="k24_995"' + (s.feedBasis !== "k24_999" ? " selected" : "") + ">995 fine — converted from the published 24K</option>" +
+            '<option value="k24_999"' + (s.feedBasis === "k24_999" ? " selected" : "") + ">24K exactly as published</option>" +
+          "</select>" +
+          "<small>Which figure the “use this rate” button takes from the daily feed.</small></label>" +
       "</div>";
 
     openModal({
@@ -140,6 +210,7 @@
         d.settings.labourRatePerGram = P.num(root.querySelector(".js-s-labour").value);
         d.settings.marginPct = P.num(root.querySelector(".js-s-margin").value);
         d.settings.roundingStep = P.num(root.querySelector(".js-s-round").value);
+        d.settings.feedBasis = root.querySelector(".js-s-basis").value;
 
         if (!P.write(d)) { toast("Couldn't save — browser storage is full."); return false; }
         renderGoldStrip();
@@ -600,6 +671,7 @@
 
   /* ---------- Wiring ---------- */
   document.addEventListener("click", function (e) {
+    if (e.target.closest(".js-gold-apply-feed")) { applyFeedRate(); return; }
     if (e.target.closest(".js-gold-edit")) { openGoldDialog(); return; }
     if (e.target.closest(".js-add-product")) { openEditor(null); return; }
     var edit = e.target.closest(".js-edit-product");
@@ -608,4 +680,5 @@
 
   window.MiroAdminPricing = { renderGoldStrip: renderGoldStrip, openEditor: openEditor };
   renderGoldStrip();
+  loadFeed();
 })();

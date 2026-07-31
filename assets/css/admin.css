@@ -751,3 +751,21 @@
   font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--navy);
 }
 .photo .gbtn { min-height: 36px; padding: 6px 10px; font-size: 11px; }
+
+/* Daily rate feed — a suggestion under the gold strip, not an auto-apply */
+.goldfeed {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+  gap: 12px 20px;
+  margin: -12px 0 20px; padding: 12px 20px;
+  background: var(--cream-soft);
+  border: 1px solid var(--line); border-top: 0;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+}
+.goldfeed__text { font-size: 13.5px; color: var(--ink-soft); }
+.goldfeed__text strong { color: var(--navy); text-transform: capitalize; }
+.goldfeed__text span { color: var(--ink-soft); }
+.goldfeed__ok {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--teal);
+}
+.goldfeed--matched { background: var(--teal-tint); }

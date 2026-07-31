@@ -38,7 +38,10 @@
     settings: {
       labourRatePerGram: 1300,
       marginPct: 30,
-      roundingStep: 5000
+      roundingStep: 5000,
+      /* Which figure from the daily feed the "use this rate" button applies.
+         The client asked for 995 fine; retail pages quote 24K at 999. */
+      feedBasis: "k24_995"
     },
     pieces: {}
   };
@@ -66,7 +69,9 @@
     }
     if (data.settings && typeof data.settings === "object") {
       Object.keys(out.settings).forEach(function (k) {
-        if (typeof data.settings[k] === "number") out.settings[k] = data.settings[k];
+        /* Keep a stored value only when it is the same type as the default,
+           so a malformed store can't swap a rate for a string. */
+        if (typeof data.settings[k] === typeof out.settings[k]) out.settings[k] = data.settings[k];
       });
     }
     if (data.pieces && typeof data.pieces === "object") out.pieces = data.pieces;

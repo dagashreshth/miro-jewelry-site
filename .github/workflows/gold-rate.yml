@@ -1,0 +1,43 @@
+name: Update gold rate
+
+# Pulls the Mumbai gold rate once a day and commits it, so the back office
+# has a fresh figure to price against without anyone typing it in.
+#
+# 07:30 UTC = 13:00 IST — the 1pm lock the client asked for. GitHub's
+# scheduler is best-effort and can run late under load, so the back office
+# always treats the committed rate as a suggestion with a manual override.
+on:
+  schedule:
+    - cron: "30 7 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: gold-rate
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch today's rate
+        # The script validates every figure and exits non-zero rather than
+        # writing a rate it cannot verify, so a bad day leaves the last
+        # good rate in place instead of corrupting prices.
+        run: python3 scripts/fetch-gold-rate.py
+
+      - name: Commit if the rate changed
+        run: |
+          if git diff --quiet -- assets/data/gold-rate.json; then
+            echo "Rate unchanged — nothing to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/data/gold-rate.json
+          git commit -m "Gold rate: $(python3 -c "import json;d=json.load(open('assets/data/gold-rate.json'));print(d['rateDate'],'24K',d['perGram']['k24_999'])")"
+          git push
