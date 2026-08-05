@@ -450,12 +450,17 @@
       auto.hidden = !isDiamond;
       if (isDiamond) {
         var hit = P.diamondRate(data, diamonds);
-        if (hit) {
+        if (hit && !hit.missingSize) {
           auto.textContent = money(hit.rate);
-          auto.className = "st-rate js-st-rateauto" + (hit.exact ? "" : " st-rate--near");
-          auto.title = hit.exact
-            ? "From the Diamond Inventory"
-            : "Nearest inventory row: " + dec(P.num(hit.row.ctw), 3) + " ct " + (hit.row.shape || "") + " " + (hit.row.clarity || "");
+          auto.className = "st-rate js-st-rateauto";
+          auto.title = "From the Diamond Inventory";
+        } else if (hit && hit.missingSize) {
+          /* Right stone, size not on the card. Never borrow a nearby rate —
+             price per carat climbs steeply with size. */
+          auto.textContent = "add " + dec(hit.wanted, 3) + " ct";
+          auto.className = "st-rate js-st-rateauto st-rate--missing";
+          auto.title = "The Diamond Inventory has no " + dec(hit.wanted, 3) + " ct rate for this stone. " +
+            "It lists " + hit.available.map(function (c) { return dec(c, 3); }).join(", ") + " ct — add this size there.";
         } else {
           auto.textContent = "no rate";
           auto.className = "st-rate js-st-rateauto st-rate--missing";
@@ -473,8 +478,11 @@
     root.querySelector(".js-psummary").innerHTML =
       (noRate ? '<p class="psummary__warn">No gold rate set yet — metal cost is counted as zero. Set the 995 rate on the Products page.</p>' : "") +
       (r.stones.unpriced
-        ? '<p class="psummary__warn">' + r.stones.unpriced + " diamond row" + (r.stones.unpriced === 1 ? " has" : "s have") +
-          " no matching rate in the Diamond Inventory — counted as zero until a rate exists.</p>"
+        ? '<p class="psummary__warn"><strong>' + r.stones.unpriced + " diamond row" +
+          (r.stones.unpriced === 1 ? " has" : "s have") + " no rate.</strong> " +
+          "Those stones are counted as zero, so this price is too low. Add the missing " +
+          "carat weight to the Diamond Inventory — a rate for a different size is not used, " +
+          "because price per carat changes sharply with stone size.</p>"
         : "") +
       '<table class="psum">' +
         "<caption>Cost breakdown</caption>" +

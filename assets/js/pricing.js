@@ -133,11 +133,14 @@
 
   /* ---------- Diamond Inventory lookup ----------
      A diamond's ₹/carat comes from the inventory rather than being typed on
-     the piece. We match on shape and clarity, then take the inventory row
-     whose carat weight is nearest the stone being priced. Charni size, when
-     both sides state one, must agree — it is a sizing grade, not a
-     preference. Returns null when nothing matches, so the caller can show
-     "no rate" instead of silently pricing a stone at zero. */
+     the piece. We match on shape, clarity, charni (when both sides state
+     one) and — critically — on carat weight.
+
+     The size must actually be on the rate card. Price per carat climbs
+     steeply with stone size, so borrowing a 0.25 ct rate for a 2 ct stone
+     would underprice it by a wide margin. An unlisted size is reported as
+     unpriced so it can be added, rather than guessed at. */
+  var CT_EPSILON = 0.005;   /* absorbs float noise, not a real size gap */
   function norm(v) { return String(v == null ? "" : v).trim().toLowerCase(); }
 
   function isBlankCharni(v) {
@@ -161,15 +164,25 @@
       if (!isBlankCharni(charni) && !isBlankCharni(d.charni) && norm(d.charni) !== norm(charni)) return false;
       return true;
     });
+    /* Nothing of this shape/clarity/charni is on the card at all */
     if (!candidates.length) return null;
 
-    var best = null, bestGap = Infinity;
+    var match = null;
     candidates.forEach(function (d) {
-      var gap = Math.abs(num(d.ctw) - want);
-      if (gap < bestGap) { bestGap = gap; best = d; }
+      if (Math.abs(num(d.ctw) - want) <= CT_EPSILON) match = d;
     });
-    if (!best) return null;
-    return { rate: num(best.pricePerCtw), row: best, exact: bestGap < 0.0005 };
+    if (match) return { rate: num(match.pricePerCtw), row: match, exact: true };
+
+    /* Right stone, wrong size — tell the caller which sizes do exist so it
+       can say what to add instead of quietly using the closest one. */
+    return {
+      rate: 0,
+      row: null,
+      exact: false,
+      missingSize: true,
+      wanted: want,
+      available: candidates.map(function (d) { return num(d.ctw); }).sort(function (a, b) { return a - b; })
+    };
   }
 
   /* ---------- Core calculation ---------- */
