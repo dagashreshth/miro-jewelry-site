@@ -624,6 +624,9 @@
         }
         if (window.MiroAdmin && window.MiroAdmin.refreshProducts) window.MiroAdmin.refreshProducts();
         toast(esc(piece.serial) + " saved.");
+        /* Push it to the live site straight away once connected, so an edit
+           in the dashboard doesn't sit here invisibly. */
+        if (window.MiroAdminCatalog && window.MiroAdminCatalog.autoPublish) window.MiroAdminCatalog.autoPublish();
         return true;
       }
     });

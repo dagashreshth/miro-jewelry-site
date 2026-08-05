@@ -85,6 +85,7 @@
     renderDiamonds();
     if (window.MiroAdmin && window.MiroAdmin.refreshProducts) window.MiroAdmin.refreshProducts();
     toast(data.diamonds.length + " diamond rate" + (data.diamonds.length === 1 ? "" : "s") + " saved — pieces repriced.");
+    autoPublish();
   }
 
   /* ============================================================
@@ -157,15 +158,103 @@
     try { localStorage.setItem("miro_journal", JSON.stringify(posts)); }
     catch (e) { toast("Couldn't save — browser storage is full."); return; }
     renderJournal();
-    toast(posts.length + " journal post" + (posts.length === 1 ? "" : "s") + " saved. Publish to push them live.");
+    toast(posts.length + " journal post" + (posts.length === 1 ? "" : "s") + " saved.");
+    autoPublish();
   }
 
   /* ============================================================
      Publish to the live site
-     Writes assets/data/catalog.js through the GitHub contents API. The
-     token is the client's own fine-grained token, kept in her browser and
-     never committed — it is not part of the site.
+
+     Writes assets/data/catalog.js — and any newly uploaded photograph —
+     through the GitHub contents API, using a fine-grained token that lives
+     only in this browser. Connecting is a one-time step; after that the
+     dashboard publishes on its own whenever something is saved.
      ============================================================ */
+  var PHOTO_DIR = "assets/img/products";
+  var LAST_PUBLISHED_KEY = "miro_published_at";
+
+  function token() {
+    try { return localStorage.getItem(TOKEN_KEY) || ""; } catch (e) { return ""; }
+  }
+  function isConnected() { return !!token(); }
+
+  function lastPublished() {
+    try { return localStorage.getItem(LAST_PUBLISHED_KEY) || ""; } catch (e) { return ""; }
+  }
+  function markPublished() {
+    try { localStorage.setItem(LAST_PUBLISHED_KEY, new Date().toISOString()); } catch (e) { /* ignore */ }
+    renderPublishState();
+  }
+
+  function api(path, opts) {
+    opts = opts || {};
+    return fetch("https://api.github.com/repos/" + REPO + "/contents/" + path, {
+      method: opts.method || "GET",
+      headers: {
+        Authorization: "Bearer " + token(),
+        Accept: "application/vnd.github+json"
+      },
+      body: opts.body ? JSON.stringify(opts.body) : undefined
+    });
+  }
+
+  function shaOf(path) {
+    return api(path).then(function (r) {
+      return r.ok ? r.json().then(function (j) { return j.sha; }) : null;
+    }).catch(function () { return null; });
+  }
+
+  /* Writes one file, replacing it when it already exists. */
+  function putFile(path, base64Content, message) {
+    return shaOf(path).then(function (sha) {
+      var body = { message: message, content: base64Content };
+      if (sha) body.sha = sha;
+      return api(path, { method: "PUT", body: body }).then(function (r) {
+        if (r.ok) return true;
+        return r.json().then(function (j) {
+          throw new Error((j && j.message) || ("HTTP " + r.status));
+        });
+      });
+    });
+  }
+
+  function utf8ToBase64(text) {
+    return btoa(String.fromCharCode.apply(null, new TextEncoder().encode(text)));
+  }
+
+  /* A photograph arrives from the picker as a data URL. Committing those
+     inline would push catalog.js into the megabytes and slow every page, so
+     each one is written out as a real image file and referenced by path. */
+  function isDataUrl(src) { return /^data:/.test(String(src || "")); }
+
+  function photoPath(pieceId, index) {
+    var safe = String(pieceId).replace(/[^a-z0-9-]+/gi, "-").toLowerCase();
+    return PHOTO_DIR + "/" + safe + "-" + (index + 1) + ".jpg";
+  }
+
+  function uploadPhotos(pieces, onProgress) {
+    var jobs = [];
+    Object.keys(pieces).forEach(function (id) {
+      (pieces[id].photos || []).forEach(function (src, i) {
+        if (isDataUrl(src)) jobs.push({ id: id, index: i, src: src });
+      });
+    });
+    if (!jobs.length) return Promise.resolve(pieces);
+
+    var done = 0;
+    return jobs.reduce(function (chain, job) {
+      return chain.then(function () {
+        var path = photoPath(job.id, job.index);
+        var base64 = String(job.src).split(",")[1] || "";
+        return putFile(path, base64, "Catalogue: photograph for " + job.id).then(function () {
+          pieces[job.id].photos[job.index] = path;
+          done++;
+          if (onProgress) onProgress(done, jobs.length);
+        });
+      });
+    }, Promise.resolve()).then(function () { return pieces; });
+  }
+
   function catalogPayload() {
     var data = P.read();
     var pieces = {};
@@ -204,109 +293,172 @@
     };
   }
 
-  function catalogFileContents() {
+  function catalogFileContents(payload) {
     return (
       "/* ============================================================\n" +
       "   Miró — Published catalogue overrides\n" +
       "   Written by the back office (\"Publish to live site\").\n" +
       "   Generated file — edit through the dashboard, not by hand.\n" +
       "   ============================================================ */\n" +
-      "window.MiroCatalog = " + JSON.stringify(catalogPayload(), null, 2) + ";\n"
+      "window.MiroCatalog = " + JSON.stringify(payload, null, 2) + ";\n"
     );
   }
 
-  function download(name, text) {
-    var blob = new Blob([text], { type: "text/javascript" });
-    var a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = name;
-    document.body.appendChild(a);
-    a.click();
-    setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 0);
+  /* The whole publish, start to finish. */
+  function publish(onStatus) {
+    var say = onStatus || function () {};
+    if (!isConnected()) return Promise.reject(new Error("Not connected to GitHub yet."));
+
+    var payload = catalogPayload();
+    say("Uploading photographs…");
+    return uploadPhotos(payload.pieces, function (n, total) {
+      say("Uploading photographs… " + n + " of " + total);
+    }).then(function () {
+      say("Writing the catalogue…");
+      return putFile(CATALOG_PATH, utf8ToBase64(catalogFileContents(payload)),
+        "Catalogue: publish changes from the back office");
+    }).then(function () {
+      markPublished();
+      return payload;
+    });
   }
 
-  function b64(text) {
-    /* btoa is latin-1 only; encode UTF-8 first so accents survive */
-    return btoa(String.fromCharCode.apply(null, new TextEncoder().encode(text)));
+  /* ---------- Publish state on the Products page ---------- */
+  function renderPublishState() {
+    var host = document.querySelector(".js-publish-state");
+    if (!host) return;
+    var when = lastPublished();
+    if (!isConnected()) {
+      host.innerHTML = '<span class="pubstate pubstate--off">Not connected — changes stay in this browser</span>';
+      return;
+    }
+    host.innerHTML = when
+      ? '<span class="pubstate pubstate--ok">Live site updated ' + esc(new Date(when).toLocaleString("en-IN", {
+          day: "numeric", month: "short", hour: "numeric", minute: "2-digit", hour12: true
+        })) + "</span>"
+      : '<span class="pubstate">Connected — nothing published yet</span>';
   }
 
-  function publishViaGitHub(token, contents, done) {
-    var base = "https://api.github.com/repos/" + REPO + "/contents/" + CATALOG_PATH;
-    var headers = {
-      Authorization: "Bearer " + token,
-      Accept: "application/vnd.github+json"
-    };
-    fetch(base, { headers: headers })
-      .then(function (r) { return r.ok ? r.json() : { sha: undefined }; })
-      .then(function (meta) {
-        return fetch(base, {
-          method: "PUT",
-          headers: headers,
-          body: JSON.stringify({
-            message: "Catalogue: publish product changes from the back office",
-            content: b64(contents),
-            sha: meta && meta.sha
-          })
-        });
-      })
-      .then(function (r) {
-        if (r.ok) { done(null); return; }
-        return r.json().then(function (j) { done(new Error(j.message || ("HTTP " + r.status))); });
-      })
-      .catch(function (err) { done(err); });
+  /* Publish quietly after a save, so an edit reaches the site without
+     anyone having to remember a second button. */
+  function autoPublish() {
+    if (!isConnected()) return;
+    var host = document.querySelector(".js-publish-state");
+    if (host) host.innerHTML = '<span class="pubstate">Publishing…</span>';
+    publish().then(function () {
+      toast("Published — the live site updates in about a minute.");
+    }).catch(function (err) {
+      renderPublishState();
+      toast("Publish failed: " + esc(err.message));
+    });
   }
 
   function openPublish() {
     var payload = catalogPayload();
     var count = Object.keys(payload.pieces).length;
-    var token = "";
-    try { token = localStorage.getItem(TOKEN_KEY) || ""; } catch (e) { token = ""; }
+    var photos = 0;
+    Object.keys(payload.pieces).forEach(function (id) {
+      (payload.pieces[id].photos || []).forEach(function (s) { if (isDataUrl(s)) photos++; });
+    });
+
+    var connected = isConnected();
+    var tokenUrl = "https://github.com/settings/personal-access-tokens/new";
+
+    var setup =
+      '<ol class="setup">' +
+        "<li>Open <a href=\"" + tokenUrl + "\" target=\"_blank\" rel=\"noopener\">GitHub's token page</a> " +
+          "(sign in as the account that owns the website).</li>" +
+        "<li><strong>Token name:</strong> anything — “Miró back office” works.</li>" +
+        "<li><strong>Repository access:</strong> choose <em>Only select repositories</em>, then pick " +
+          "<code>" + esc(REPO) + "</code>.</li>" +
+        "<li><strong>Permissions → Repository permissions → Contents:</strong> set to " +
+          "<em>Read and write</em>. Nothing else is needed.</li>" +
+        "<li>Click <strong>Generate token</strong>, copy it, and paste it below.</li>" +
+      "</ol>";
 
     var body =
       '<div class="pform">' +
-        "<p class=\"pform__note\">This pushes <strong>" + count + " piece" + (count === 1 ? "" : "s") +
-          "</strong> and <strong>" + payload.instagram.length + " journal post" +
-          (payload.instagram.length === 1 ? "" : "s") + "</strong> to the live storefront by writing " +
-          "<code>" + CATALOG_PATH + "</code>. The site rebuilds in about a minute.</p>" +
+        (connected
+          ? '<p class="pform__note pform__note--ok">Connected to <code>' + esc(REPO) + "</code>. " +
+            "Publishing sends <strong>" + count + " piece" + (count === 1 ? "" : "s") + "</strong>" +
+            (photos ? " and <strong>" + photos + " new photograph" + (photos === 1 ? "" : "s") + "</strong>" : "") +
+            " and <strong>" + payload.instagram.length + " journal post" +
+            (payload.instagram.length === 1 ? "" : "s") + "</strong> to the live site.</p>"
+          : '<p class="pform__note">The dashboard needs permission to write to the website once. ' +
+            "This takes about a minute and never has to be done again on this computer.</p>" + setup) +
 
         '<label class="pfield"><span>GitHub token</span>' +
-          '<input class="input js-pub-token" type="password" autocomplete="off" value="' + esc(token) + '" placeholder="github_pat_…">' +
-          "<small>A fine-grained token with <strong>Contents: read and write</strong> on this repository. " +
-          "It is stored only in this browser and is never added to the site.</small></label>" +
+          '<input class="input js-pub-token" type="password" autocomplete="off" value="' + esc(token()) + '" placeholder="github_pat_…">' +
+          "<small>Stored only in this browser. It is never added to the website.</small></label>" +
 
-        '<label class="checkbox-row"><input type="checkbox" class="js-pub-remember"' + (token ? " checked" : "") + ">" +
-          "<span>Remember this token in this browser</span></label>" +
+        '<div class="pubcheck"><button type="button" class="gbtn js-pub-test">Check connection</button>' +
+          '<span class="js-pub-result"></span></div>' +
 
-        '<p class="pform__note">No token? Use <strong>Download file</strong> and send it over — it drops straight into ' +
-          "<code>" + CATALOG_PATH + "</code>.</p>" +
+        '<p class="pform__note">Prefer not to use a token? <strong>Download file</strong> saves the catalogue ' +
+          "so a developer can drop it into <code>" + CATALOG_PATH + "</code>. Photographs are not included that way.</p>" +
       "</div>";
 
     window.MiroModal({
-      title: "Publish to live site",
+      title: connected ? "Publish to live site" : "Connect the dashboard to the website",
       body: body,
-      saveLabel: "Publish",
+      saveLabel: connected ? "Publish now" : "Save & publish",
       extraFoot: '<button type="button" class="gbtn js-pub-download">Download file</button>',
       onSave: function (root) {
         var value = root.querySelector(".js-pub-token").value.trim();
-        if (!value) { toast("Paste a token, or use Download file."); return false; }
-        var remember = root.querySelector(".js-pub-remember").checked;
-        try {
-          if (remember) localStorage.setItem(TOKEN_KEY, value);
-          else localStorage.removeItem(TOKEN_KEY);
-        } catch (e) { /* private mode — publishing still works this once */ }
+        if (!value) { setResult(root, "Paste a token first, or use Download file.", false); return false; }
+        try { localStorage.setItem(TOKEN_KEY, value); } catch (e) { /* private mode */ }
 
         var btn = root.querySelector(".js-pm-save");
         btn.disabled = true;
-        btn.textContent = "Publishing…";
-        publishViaGitHub(value, catalogFileContents(), function (err) {
+        publish(function (status) { btn.textContent = status; }).then(function () {
           btn.disabled = false;
-          btn.textContent = "Publish";
-          if (err) { toast("Publish failed: " + esc(err.message)); return; }
-          toast("Published — the live site rebuilds in about a minute.");
+          btn.textContent = "Publish now";
+          toast("Published — the live site updates in about a minute.");
           window.MiroModalClose();
+        }).catch(function (err) {
+          btn.disabled = false;
+          btn.textContent = "Publish now";
+          setResult(root, "Publish failed: " + err.message, false);
         });
-        return false;   /* the callback closes it once GitHub answers */
+        return false;
       }
+    });
+  }
+
+  function setResult(root, message, ok) {
+    var slot = root.querySelector(".js-pub-result");
+    if (!slot) return;
+    slot.textContent = message;
+    slot.className = "js-pub-result " + (ok ? "pub-ok" : "pub-bad");
+  }
+
+  function testConnection(root) {
+    var value = root.querySelector(".js-pub-token").value.trim();
+    if (!value) { setResult(root, "Paste a token first.", false); return; }
+    setResult(root, "Checking…", true);
+    fetch("https://api.github.com/repos/" + REPO, {
+      headers: { Authorization: "Bearer " + value, Accept: "application/vnd.github+json" }
+    }).then(function (r) {
+      if (!r.ok) {
+        setResult(root, r.status === 401
+          ? "That token wasn't accepted — check it was copied in full."
+          : r.status === 404
+            ? "Token works, but it can't see " + REPO + " — re-check the repository it was granted."
+            : "GitHub said HTTP " + r.status + ".", false);
+        return;
+      }
+      return r.json().then(function (repo) {
+        var perms = repo.permissions || {};
+        if (!perms.push) {
+          setResult(root, "Token can read the website but not write to it — set Contents to Read and write.", false);
+          return;
+        }
+        try { localStorage.setItem(TOKEN_KEY, value); } catch (e) { /* ignore */ }
+        setResult(root, "Connected. You can publish.", true);
+        renderPublishState();
+      });
+    }).catch(function (err) {
+      setResult(root, "Couldn't reach GitHub: " + err.message, false);
     });
   }
 
@@ -355,8 +507,12 @@
     if (e.target.closest(".js-ig-save")) { saveJournal(); return; }
 
     if (e.target.closest(".js-publish")) { openPublish(); return; }
+
+    var test = e.target.closest(".js-pub-test");
+    if (test) { testConnection(test.closest(".pmodal")); return; }
+
     if (e.target.closest(".js-pub-download")) {
-      download("catalog.js", catalogFileContents());
+      download("catalog.js", catalogFileContents(catalogPayload()));
       toast("Downloaded — drop it into " + CATALOG_PATH + " and commit.");
     }
   });
@@ -389,9 +545,15 @@
   window.MiroAdminCatalog = {
     renderDiamonds: renderDiamonds,
     renderJournal: renderJournal,
-    catalogFileContents: catalogFileContents
+    catalogPayload: catalogPayload,
+    catalogFileContents: catalogFileContents,
+    publish: publish,
+    autoPublish: autoPublish,
+    isConnected: isConnected,
+    renderPublishState: renderPublishState
   };
 
   renderDiamonds();
   renderJournal();
+  renderPublishState();
 })();

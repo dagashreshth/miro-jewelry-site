@@ -15,7 +15,10 @@
      through so every call site keeps working unchanged. */
   function img(id, w, extra) {
     var value = String(id == null ? "" : id);
-    if (/^(data:|blob:|https?:\/\/|\/|\.\/|\.\.\/)/.test(value)) return value;
+    /* An Unsplash id is a bare slug like "1611652022419-a9419f74343d" — it
+       never contains a slash or a file extension. Anything that does is a
+       real path or URL (an uploaded photograph, say) and is used as-is. */
+    if (/^(data:|blob:)/.test(value) || /[\/.]/.test(value)) return value;
     return (
       "https://images.unsplash.com/photo-" + value +
       "?w=" + (w || 1000) + "&q=80&auto=format" + (extra || "")
