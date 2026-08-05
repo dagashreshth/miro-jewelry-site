@@ -362,18 +362,24 @@
     });
 
     var connected = isConnected();
-    var tokenUrl = "https://github.com/settings/personal-access-tokens/new";
+    /* A classic token, not fine-grained: fine-grained tokens can only be
+       scoped to repositories the signed-in account owns, so a collaborator
+       on someone else's repository cannot create one. Classic works for
+       owner and collaborator alike. */
+    var tokenUrl = "https://github.com/settings/tokens/new?description=Miro%20back%20office&scopes=repo";
 
     var setup =
       '<ol class="setup">' +
-        "<li>Open <a href=\"" + tokenUrl + "\" target=\"_blank\" rel=\"noopener\">GitHub's token page</a> " +
-          "(sign in as the account that owns the website).</li>" +
-        "<li><strong>Token name:</strong> anything — “Miró back office” works.</li>" +
-        "<li><strong>Repository access:</strong> choose <em>Only select repositories</em>, then pick " +
-          "<code>" + esc(REPO) + "</code>.</li>" +
-        "<li><strong>Permissions → Repository permissions → Contents:</strong> set to " +
-          "<em>Read and write</em>. Nothing else is needed.</li>" +
-        "<li>Click <strong>Generate token</strong>, copy it, and paste it below.</li>" +
+        "<li>You need a free GitHub account, and access to <code>" + esc(REPO) + "</code>. " +
+          "If you were sent an invitation by email, accept it first.</li>" +
+        "<li>Open <a href=\"" + tokenUrl + "\" target=\"_blank\" rel=\"noopener\">this GitHub page</a> " +
+          "while signed in to your own account.</li>" +
+        "<li><strong>Note:</strong> “Miró back office”. <strong>Expiration:</strong> " +
+          "choose <em>No expiration</em>, or a year if you'd rather renew it.</li>" +
+        "<li>Tick the box marked <strong>repo</strong> — the first one in the list. " +
+          "Nothing else needs ticking.</li>" +
+        "<li>Scroll down, click <strong>Generate token</strong>, copy the line it shows you " +
+          "(it is only shown once), and paste it below.</li>" +
       "</ol>";
 
     var body =
