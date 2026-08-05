@@ -171,6 +171,7 @@
      dashboard publishes on its own whenever something is saved.
      ============================================================ */
   var PHOTO_DIR = "assets/img/products";
+  var JOURNAL_DIR = "assets/img/journal";
   var LAST_PUBLISHED_KEY = "miro_published_at";
 
   function token() {
@@ -218,8 +219,17 @@
     });
   }
 
+  /* apply() passes the array as arguments, and engines cap how many a call
+     may take — a catalogue of any size overruns it and throws "Maximum call
+     stack size exceeded". Convert in chunks that stay well under the cap. */
   function utf8ToBase64(text) {
-    return btoa(String.fromCharCode.apply(null, new TextEncoder().encode(text)));
+    var bytes = new TextEncoder().encode(text);
+    var CHUNK = 0x8000;
+    var binary = "";
+    for (var i = 0; i < bytes.length; i += CHUNK) {
+      binary += String.fromCharCode.apply(null, bytes.subarray(i, i + CHUNK));
+    }
+    return btoa(binary);
   }
 
   /* A photograph arrives from the picker as a data URL. Committing those
@@ -232,27 +242,58 @@
     return PHOTO_DIR + "/" + safe + "-" + (index + 1) + ".jpg";
   }
 
-  function uploadPhotos(pieces, onProgress) {
+  function journalPath(index) {
+    return JOURNAL_DIR + "/post-" + (index + 1) + ".jpg";
+  }
+
+  /* Every image the payload still carries as a data URL, wherever it sits.
+     Journal images upload through the same picker as product photographs
+     and have to travel the same route out — miss them and whole photographs
+     end up inside catalog.js as text. */
+  function imageJobs(payload) {
     var jobs = [];
-    Object.keys(pieces).forEach(function (id) {
-      (pieces[id].photos || []).forEach(function (src, i) {
-        if (isDataUrl(src)) jobs.push({ id: id, index: i, src: src });
+
+    Object.keys(payload.pieces).forEach(function (id) {
+      var photos = payload.pieces[id].photos || [];
+      photos.forEach(function (src, i) {
+        if (!isDataUrl(src)) return;
+        jobs.push({
+          src: src,
+          path: photoPath(id, i),
+          label: id,
+          keep: function (path) { photos[i] = path; }
+        });
       });
     });
-    if (!jobs.length) return Promise.resolve(pieces);
+
+    (payload.instagram || []).forEach(function (post, i) {
+      if (!isDataUrl(post.image)) return;
+      jobs.push({
+        src: post.image,
+        path: journalPath(i),
+        label: "journal post " + (i + 1),
+        keep: function (path) { post.image = path; }
+      });
+    });
+
+    return jobs;
+  }
+
+  function uploadImages(payload, onProgress) {
+    var jobs = imageJobs(payload);
+    if (!jobs.length) return Promise.resolve(payload);
 
     var done = 0;
     return jobs.reduce(function (chain, job) {
       return chain.then(function () {
-        var path = photoPath(job.id, job.index);
         var base64 = String(job.src).split(",")[1] || "";
-        return putFile(path, base64, "Catalogue: photograph for " + job.id).then(function () {
-          pieces[job.id].photos[job.index] = path;
+        return putFile(job.path, base64, "Catalogue: photograph for " + job.label).then(function () {
+          job.keep(job.path);
           done++;
           if (onProgress) onProgress(done, jobs.length);
         });
       });
-    }, Promise.resolve()).then(function () { return pieces; });
+    }, Promise.resolve()).then(function () { return payload; });
   }
 
   function catalogPayload() {
@@ -311,7 +352,7 @@
 
     var payload = catalogPayload();
     say("Uploading photographs…");
-    return uploadPhotos(payload.pieces, function (n, total) {
+    return uploadImages(payload, function (n, total) {
       say("Uploading photographs… " + n + " of " + total);
     }).then(function () {
       say("Writing the catalogue…");
@@ -356,10 +397,7 @@
   function openPublish() {
     var payload = catalogPayload();
     var count = Object.keys(payload.pieces).length;
-    var photos = 0;
-    Object.keys(payload.pieces).forEach(function (id) {
-      (payload.pieces[id].photos || []).forEach(function (s) { if (isDataUrl(s)) photos++; });
-    });
+    var photos = imageJobs(payload).length;
 
     var connected = isConnected();
     /* A classic token, not fine-grained: fine-grained tokens can only be
