@@ -21,11 +21,13 @@
 (function () {
   "use strict";
 
-  /* SHA-256 of SALT + password. Empty means "not configured yet", which
-     shows the setup screen instead of the password prompt. */
-  var PASSWORD_HASH = "";
+  /* PBKDF2-SHA256 of the password, 1.2 million iterations. Deliberately slow:
+     this hash is public, so the only defence is making each guess against
+     it expensive. Costs the user about a second, once a month. */
+  var PASSWORD_HASH = "aab1b8c1dee6238b50b527bac884d214b467ed25e78ac7e41dbcde1134c98176";
 
-  var SALT = "miro-back-office-";
+  var SALT = "miro-back-office-v2";
+  var ITERATIONS = 1200000;
   var STORE_KEY = "miro_gate_until";
   var REMEMBER_DAYS = 30;
 
@@ -60,11 +62,21 @@
     (document.head || document.documentElement).appendChild(s);
   }
 
-  function sha256(text) {
+  function derive(password) {
     if (!window.crypto || !crypto.subtle) {
       return Promise.reject(new Error("This browser can't check the password."));
     }
-    return crypto.subtle.digest("SHA-256", new TextEncoder().encode(text))
+    var enc = new TextEncoder();
+    return crypto.subtle
+      .importKey("raw", enc.encode(password), "PBKDF2", false, ["deriveBits"])
+      .then(function (key) {
+        return crypto.subtle.deriveBits({
+          name: "PBKDF2",
+          salt: enc.encode(SALT),
+          iterations: ITERATIONS,
+          hash: "SHA-256"
+        }, key, 256);
+      })
       .then(function (buf) {
         return Array.prototype.map.call(new Uint8Array(buf), function (b) {
           return ("0" + b.toString(16)).slice(-2);
@@ -114,19 +126,35 @@
 
     var input = wrap.querySelector(".gate__input");
     var msg = wrap.querySelector(".gate__msg");
+    var btn = wrap.querySelector(".gate__btn");
+    var busy = false;
 
     function submit() {
+      if (busy) return;
       var value = input.value;
       if (!value) { msg.textContent = "Enter the password."; return; }
-      sha256(SALT + value).then(function (hash) {
+
+      /* The derivation is deliberately slow, so say something. */
+      busy = true;
+      btn.textContent = "Checking…";
+      btn.disabled = true;
+      msg.textContent = "";
+
+      derive(value).then(function (hash) {
         if (hash === PASSWORD_HASH) { remember(); open(); return; }
         msg.textContent = "That password isn't right.";
         input.value = "";
+      }).catch(function (err) {
+        msg.textContent = err.message;
+      }).then(function () {
+        busy = false;
+        btn.textContent = "Unlock";
+        btn.disabled = false;
         input.focus();
-      }).catch(function (err) { msg.textContent = err.message; });
+      });
     }
 
-    wrap.querySelector(".gate__btn").addEventListener("click", submit);
+    btn.addEventListener("click", submit);
     input.addEventListener("keydown", function (e) {
       if (e.key === "Enter") { e.preventDefault(); submit(); }
     });
@@ -151,6 +179,7 @@
     var input = wrap.querySelector(".gate__input");
     var msg = wrap.querySelector(".gate__msg");
     var out = wrap.querySelector(".gate__out");
+    var btn = wrap.querySelector(".gate__btn");
 
     function generate() {
       var value = input.value;
@@ -159,13 +188,21 @@
         return;
       }
       msg.textContent = "";
-      sha256(SALT + value).then(function (hash) {
+      btn.textContent = "Working…";
+      btn.disabled = true;
+
+      derive(value).then(function (hash) {
         out.hidden = false;
         out.textContent = 'var PASSWORD_HASH = "' + hash + '";';
-      }).catch(function (err) { msg.textContent = err.message; });
+      }).catch(function (err) {
+        msg.textContent = err.message;
+      }).then(function () {
+        btn.textContent = "Generate";
+        btn.disabled = false;
+      });
     }
 
-    wrap.querySelector(".gate__btn").addEventListener("click", generate);
+    btn.addEventListener("click", generate);
     input.addEventListener("keydown", function (e) {
       if (e.key === "Enter") { e.preventDefault(); generate(); }
     });
