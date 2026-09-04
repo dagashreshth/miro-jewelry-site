@@ -121,6 +121,7 @@
             '<nav class="site-footer__col" aria-label="Care">' +
               "<h4>Client care</h4><ul>" +
                 '<li><a href="faqs.html">FAQs</a></li>' +
+                '<li><a href="journal.html">Journal</a></li>' +
                 '<li><a href="bespoke.html">Bespoke orders</a></li>' +
                 '<li><a href="contact.html">Contact us</a></li>' +
                 '<li><a href="faqs.html#care">Jewelry care</a></li>' +
@@ -129,7 +130,7 @@
               "<h4>The atelier</h4>" +
               "<address>Miró Fine Jewelry<br>14 Ropewalk Lane, Kala Ghoda<br>Mumbai 400 001, India<br><br>" +
               '<a href="tel:+912266001414">+91 22 6600 1414</a><br>' +
-              '<a href="mailto:care@mirojewelry.in">care@mirojewelry.in</a></address>' +
+              '<a href="mailto:contact@mirofinejewelry.com">contact@mirofinejewelry.com</a></address>' +
             "</div>" +
           "</div>" +
           '<div class="site-footer__bottom">' +

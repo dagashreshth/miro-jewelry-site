@@ -1,0 +1,39 @@
+# Miró Fine Jewelry — https://mirofinejewelry.com
+#
+# Note on the back office and the checkout pages: they are kept out of
+# search by a <meta name="robots" content="noindex"> in each page, NOT by
+# a Disallow here. Those two things pull against each other — Disallow
+# stops a crawler fetching the page, so it never reads the noindex, and
+# the bare URL can still surface in results with no snippet. Letting them
+# be fetched is what makes the noindex actually work.
+
+User-agent: *
+Allow: /
+
+# Answer engines are wanted here, not merely tolerated — being quotable in
+# an AI answer is the point of the structured data and the journal.
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+Sitemap: https://mirofinejewelry.com/sitemap.xml
