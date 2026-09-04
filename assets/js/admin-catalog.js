@@ -40,7 +40,7 @@
         '<td data-label="Diamond CTW" class="num"><input class="input num js-d-ctw" type="number" min="0" step="0.001" value="' + esc(row.ctw) + '" placeholder="0.25"></td>' +
         '<td data-label="Clarity"><input class="input js-d-clarity" type="text" value="' + esc(row.clarity) + '" placeholder="GH/VS"></td>' +
         '<td data-label="Shape"><select class="select js-d-shape">' + shapes + "</select></td>" +
-        '<td data-label="Charni size"><input class="input js-d-charni" type="text" value="' + esc(row.charni) + '" placeholder="+2 or N/A"></td>' +
+        '<td data-label="Charni size"><input class="input js-d-charni" type="text" value="' + esc(row.charni) + '" placeholder="+2 - 2.5 or N/A"></td>' +
         '<td data-label="Price per CTW" class="num"><input class="input num js-d-rate" type="number" min="0" step="1" value="' + esc(row.pricePerCtw) + '" placeholder="50000"></td>' +
         '<td class="cell-actions"><button type="button" class="gbtn js-d-remove" aria-label="Remove this rate row">Remove</button></td>' +
       "</tr>"
@@ -74,7 +74,7 @@
     if (!note) return;
     var n = P.read().diamonds.length;
     note.textContent = n
-      ? n + " rate" + (n === 1 ? "" : "s") + " on file · a piece takes the row matching its shape, clarity and charni, nearest by carat weight."
+      ? n + " rate" + (n === 1 ? "" : "s") + " on file · round melee is matched by charni size, everything else by exact carat weight — never a neighbouring size."
       : "No rates yet — diamonds on a piece will show as unpriced until a row exists here.";
   }
 
@@ -511,6 +511,14 @@
     if (e.target.closest(".js-dia-add")) {
       var body = document.querySelector(".js-dia-rows");
       body.insertAdjacentHTML("beforeend", diaRowHTML(blankDiamond(body.children.length + 1), body.children.length));
+      /* The button now sits under the table (client feedback 2026-09-04), so
+         land the cursor in the new row rather than leaving it to be found. */
+      var fresh = body.lastElementChild;
+      var firstField = fresh && fresh.querySelector(".js-d-ctw");
+      if (firstField) {
+        try { firstField.focus({ preventScroll: true }); } catch (err) { firstField.focus(); }
+        try { fresh.scrollIntoView({ block: "nearest", behavior: "smooth" }); } catch (err) { /* older browsers */ }
+      }
       return;
     }
     var rm = e.target.closest(".js-d-remove");

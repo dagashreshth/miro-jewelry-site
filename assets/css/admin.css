@@ -3,6 +3,10 @@
    Denser, utilitarian take on the storefront design language.
    ============================================================ */
 
+/* Keep the hidden attribute authoritative over any display rule below —
+   e.g. the charni dash and auto-carat spans are toggled with `hidden`. */
+[data-page="admin"] [hidden] { display: none !important; }
+
 /* ---------- Mobile top bar ---------- */
 .admin-topbar {
   position: sticky; top: 0; z-index: 90;
@@ -685,22 +689,27 @@
 .stones__scroll { overflow-x: auto; }
 /* Wide enough that every control keeps its label legible — the wrapper
    scrolls horizontally rather than crushing the selects. */
-.stones__table { min-width: 1310px; }
+.stones__table { min-width: 1380px; }
 .stones__table .input, .stones__table .select { min-height: 44px; padding: 8px 10px; font-size: 14px; }
 .stones__table .select { padding-right: 30px; background-position: right 10px center; }
 .stones__table .input.num { text-align: right; }
 .stones__table td { vertical-align: middle; }
+/* Eleven columns: Label · Stone · Shape · Colour/Clarity · Charni · Ct/stone ·
+   Stones · ₹/carat · Total ct · Value · actions */
 .stones__table th:nth-child(1), .stones__table td:nth-child(1) { min-width: 120px; }
 .stones__table th:nth-child(2), .stones__table td:nth-child(2),
 .stones__table th:nth-child(3), .stones__table td:nth-child(3),
 .stones__table th:nth-child(4), .stones__table td:nth-child(4) { min-width: 140px; }
-.stones__table th:nth-child(5), .stones__table td:nth-child(5) { min-width: 100px; }
-.stones__table th:nth-child(6), .stones__table td:nth-child(6),
-.stones__table th:nth-child(8), .stones__table td:nth-child(8) { min-width: 110px; }
+.stones__table th:nth-child(5), .stones__table td:nth-child(5) { min-width: 190px; }
+.stones__table th:nth-child(6), .stones__table td:nth-child(6) { min-width: 100px; }
 .stones__table th:nth-child(7), .stones__table td:nth-child(7) { min-width: 92px; }
+.stones__table th:nth-child(8), .stones__table td:nth-child(8) { min-width: 110px; }
 .stones__table th:nth-child(9), .stones__table td:nth-child(9) { min-width: 92px; }
 .stones__table th:nth-child(10), .stones__table td:nth-child(10) { min-width: 120px; }
 .js-st-totalct, .js-st-value { font-variant-numeric: tabular-nums; color: var(--navy); font-weight: 600; }
+/* Coloured stones have no charni — a quiet dash where the picker would be */
+.st-dash { display: inline-block; padding: 0 8px; color: var(--ink-soft); }
+.stones__hint { margin-top: 10px; font-size: 12.5px; line-height: 1.55; color: var(--ink-soft); max-width: 86ch; }
 
 /* ---------- Summary ---------- */
 .psummary { margin-top: 26px; }

@@ -50,7 +50,8 @@
     diamonds: []
   };
 
-  var SHAPES = ["Round", "Pear", "Emerald", "Oval", "Baguette", "Cushion",
+  /* Client feedback 2026-09-04: Princess joins the list. */
+  var SHAPES = ["Round", "Princess", "Pear", "Emerald", "Oval", "Baguette", "Cushion",
                 "Heart", "Trillion", "Marquise", "Radiant"];
   var STONE_TYPES = ["Diamond", "Sapphire", "Ruby", "Tanzanite", "Emerald"];
 
@@ -133,8 +134,15 @@
 
   /* ---------- Diamond Inventory lookup ----------
      A diamond's ₹/carat comes from the inventory rather than being typed on
-     the piece. We match on shape, clarity, charni (when both sides state
-     one) and — critically — on carat weight.
+     the piece. Every match starts from shape + clarity; what happens next
+     depends on how the stone is sized (client feedback 2026-09-04):
+
+       · Round melee is bought and priced by CHARNI (sieve) size, not carat
+         weight. The piece names the charni, and both the per-stone carat
+         and the rate are read from that rate-card row — so a card change
+         reprices every piece, and nobody types 0.009 ct by hand.
+       · Anything else — larger rounds, fancy shapes, rows whose charni is
+         N/A — is matched by exact carat weight.
 
      The size must actually be on the rate card. Price per carat climbs
      steeply with stone size, so borrowing a 0.25 ct rate for a 2 ct stone
@@ -145,65 +153,121 @@
 
   function isBlankCharni(v) {
     var s = norm(v);
-    return s === "" || s === "n/a" || s === "na" || s === "-";
+    return s === "" || s === "n/a" || s === "na" || s === "-" || s === "—";
+  }
+  /* "+2 – 2.5", "+2 - 2.5" and "+2-2.5" are the same sieve; compare them
+     with dashes and spacing flattened so a stray space can't lose a match. */
+  function normCharni(v) {
+    if (isBlankCharni(v)) return "";
+    return norm(v).replace(/[–—]/g, "-").replace(/\s*-\s*/g, "-").replace(/\s+/g, " ");
   }
 
-  function diamondRate(row, diamonds) {
-    var list = Array.isArray(diamonds) ? diamonds : read().diamonds;
-    if (!list || !list.length) return null;
-
+  function candidatesFor(row, list) {
     var shape = norm(row && row.shape);
     var clarity = norm(row && row.quality);
-    var charni = row && row.charni;
-    var want = num(row && row.perStoneCt);
-
-    var candidates = list.filter(function (d) {
+    return list.filter(function (d) {
       if (!(num(d.pricePerCtw) > 0)) return false;
       if (shape && norm(d.shape) && norm(d.shape) !== shape) return false;
       if (clarity && norm(d.clarity) && norm(d.clarity) !== clarity) return false;
-      if (!isBlankCharni(charni) && !isBlankCharni(d.charni) && norm(d.charni) !== norm(charni)) return false;
       return true;
     });
-    /* Nothing of this shape/clarity/charni is on the card at all */
-    if (!candidates.length) return null;
+  }
 
+  /* The charni sizes the rate card offers for this shape + clarity, in card
+     order, each with its per-stone carat — what the editor lists to pick from. */
+  function diamondCharnis(row, diamonds) {
+    var list = Array.isArray(diamonds) ? diamonds : read().diamonds;
+    var seen = {};
+    var out = [];
+    candidatesFor(row, list || []).forEach(function (d) {
+      var key = normCharni(d.charni);
+      if (!key || seen[key]) return;
+      seen[key] = true;
+      out.push({ charni: String(d.charni).trim(), ctw: num(d.ctw), rate: num(d.pricePerCtw) });
+    });
+    return out;
+  }
+
+  /* Resolve one diamond row against the card. Always returns an object:
+       { mode: "charni" | "carat", found, rate, ctw, row, reason, available, wanted }
+     reason when not found — "empty": no card at all; "none": nothing of
+     this shape/clarity; "charni": that sieve isn't on the card; "size":
+     that carat weight isn't on the card; "nosize": neither a charni nor a
+     carat weight was given. */
+  function diamondRate(row, diamonds) {
+    var list = Array.isArray(diamonds) ? diamonds : read().diamonds;
+    var charni = normCharni(row && row.charni);
+    var want = num(row && row.perStoneCt);
+    var out = {
+      mode: charni ? "charni" : "carat",
+      found: false, exact: false,
+      rate: 0, ctw: charni ? 0 : want, row: null
+    };
+
+    if (!list || !list.length) { out.reason = "empty"; return out; }
+    var candidates = candidatesFor(row, list);
+    if (!candidates.length) { out.reason = "none"; return out; }
+
+    if (charni) {
+      var hit = null;
+      candidates.forEach(function (d) { if (!hit && normCharni(d.charni) === charni) hit = d; });
+      if (hit) {
+        out.found = out.exact = true;
+        out.rate = num(hit.pricePerCtw);
+        out.ctw = num(hit.ctw);
+        out.row = hit;
+      } else {
+        out.reason = "charni";
+        out.available = diamondCharnis(row, list).map(function (c) { return c.charni; });
+      }
+      return out;
+    }
+
+    if (!(want > 0)) { out.reason = "nosize"; return out; }
     var match = null;
     candidates.forEach(function (d) {
       if (Math.abs(num(d.ctw) - want) <= CT_EPSILON) match = d;
     });
-    if (match) return { rate: num(match.pricePerCtw), row: match, exact: true };
-
-    /* Right stone, wrong size — tell the caller which sizes do exist so it
-       can say what to add instead of quietly using the closest one. */
-    return {
-      rate: 0,
-      row: null,
-      exact: false,
-      missingSize: true,
-      wanted: want,
-      available: candidates.map(function (d) { return num(d.ctw); }).sort(function (a, b) { return a - b; })
-    };
+    if (match) {
+      out.found = out.exact = true;
+      out.rate = num(match.pricePerCtw);
+      out.row = match;
+      return out;
+    }
+    /* Right stone, wrong size — say which sizes do exist so the caller can
+       ask for the missing one instead of quietly using the closest. */
+    out.reason = "size";
+    out.missingSize = true;
+    out.wanted = want;
+    out.available = candidates
+      .map(function (d) { return num(d.ctw); })
+      .filter(function (c) { return c > 0; })
+      .sort(function (a, b) { return a - b; });
+    return out;
   }
 
   /* ---------- Core calculation ---------- */
-  /* A diamond row prices from the inventory; any other stone keeps the
-     per-carat figure entered on the piece. */
-  function rateFor(row, diamonds) {
+  /* A diamond row prices from the inventory — and, when sized by charni,
+     takes its per-stone carat from there too. Any other stone keeps the
+     figures entered on the piece. */
+  function stoneRow(row, diamonds) {
+    var qty = num(row && row.qty);
+    var perStoneCt = num(row && row.perStoneCt);
+    var rate = num(row && row.perCaratPrice);
+    var mode = "manual";
     if (norm(row && row.type) === "diamond") {
       var hit = diamondRate(row, diamonds);
-      return hit ? hit.rate : 0;
+      mode = hit.mode;
+      rate = hit.rate;
+      if (hit.mode === "charni") perStoneCt = hit.ctw;
     }
-    return num(row && row.perCaratPrice);
-  }
-
-  function stoneRow(row, diamonds) {
-    var perStoneCt = num(row && row.perStoneCt);
-    var qty = num(row && row.qty);
     var totalCt = perStoneCt * qty;
     return {
+      mode: mode,
+      perStoneCt: perStoneCt,
       totalCt: totalCt,
-      rate: rateFor(row, diamonds),
-      value: totalCt * rateFor(row, diamonds)
+      rate: rate,
+      value: totalCt * rate
     };
   }
 
@@ -211,11 +275,13 @@
     var list = Array.isArray(stones) ? stones : [];
     return list.reduce(function (acc, row) {
       var r = stoneRow(row, diamonds);
-      acc.count += num(row && row.qty);
+      var qty = num(row && row.qty);
+      acc.count += qty;
       acc.carats += r.totalCt;
       acc.value += r.value;
-      /* Surfaced so the editor can warn instead of quietly pricing at zero */
-      if (norm(row && row.type) === "diamond" && r.totalCt > 0 && !(r.rate > 0)) acc.unpriced++;
+      /* Surfaced so the editor can warn instead of quietly pricing at zero:
+         a diamond row with stones on it but no rate, or no size, is unpriced. */
+      if (norm(row && row.type) === "diamond" && qty > 0 && !(r.rate > 0 && r.perStoneCt > 0)) acc.unpriced++;
       return acc;
     }, { count: 0, carats: 0, value: 0, unpriced: 0 });
   }
@@ -291,6 +357,8 @@
     nextLockBoundary: nextLockBoundary,
     isLocked: isLocked,
     diamondRate: diamondRate,
+    diamondCharnis: diamondCharnis,
+    normCharni: normCharni,
     stoneRow: stoneRow,
     stoneTotals: stoneTotals,
     price: price,

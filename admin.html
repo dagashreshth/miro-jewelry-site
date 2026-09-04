@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Back Office — Miró Fine Jewelry</title>
   <meta name="description" content="The Miró back office — a demo dashboard for products, categories, banners, inventory, orders, customers and appointments. Demo data only, nothing is editable.">
+  <!-- seo:noindex -->
+  <meta name="robots" content="noindex, nofollow">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Mulish:wght@300;400;500;600;700&family=Monsieur+La+Doulaise&display=swap" rel="stylesheet">
@@ -289,12 +291,10 @@
             <div class="panel__bar">
               <div>
                 <h2>Diamond rate card</h2>
-                <p class="panel__note">Every diamond price per carat lives here. A piece reads its rate from this table, so a change updates every product that uses it.</p>
+                <p class="panel__note">Every diamond price per carat lives here. A piece reads its rate from this table, so a change updates every product that uses it. Round melee rows carry a charni size; a piece picks the charni and takes both its carat and its rate from that row.</p>
               </div>
-              <button type="button" class="btn js-dia-add">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg>
-                Add row
-              </button>
+              <!-- Client feedback 2026-09-04: Save up here, Add row down where the new row lands -->
+              <button type="button" class="btn js-dia-save">Save rate card</button>
             </div>
             <div class="stones__scroll">
               <table class="atable dia-table">
@@ -314,7 +314,10 @@
               </table>
             </div>
             <div class="panel__actions">
-              <button type="button" class="btn btn--sm js-dia-save">Save rate card</button>
+              <button type="button" class="btn btn--sm js-dia-add">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg>
+                Add row
+              </button>
               <p class="panel__foot js-dia-note"></p>
             </div>
           </div>

@@ -280,16 +280,49 @@
 
   /* Client request 2026-07-31: a diamond's ₹/carat is no longer typed here —
      it is read from the Diamond Inventory. Coloured stones have no rate card,
-     so they keep the manual field. */
+     so they keep the manual field.
+     Client feedback 2026-09-04: round melee is sized by charni, not carat.
+     The charni is picked from what the rate card offers for that shape and
+     clarity, and the carat per stone comes from the same row. */
+  function charniOptionsHTML(row, dropStale) {
+    var current = P.normCharni(row.charni);
+    var list = P.diamondCharnis(row, P.read().diamonds);
+    var onCard = false;
+    var html = '<option value="">By carat weight</option>';
+    list.forEach(function (c) {
+      var sel = !!current && P.normCharni(c.charni) === current;
+      if (sel) onCard = true;
+      html += '<option value="' + esc(c.charni) + '"' + (sel ? " selected" : "") + ">" +
+        esc(c.charni) + (c.ctw > 0 ? " · " + dec(c.ctw, 3) + " ct" : "") + "</option>";
+    });
+    /* A saved charni that has since left the card stays visible rather than
+       vanishing — unless the shape or clarity just changed, when it no
+       longer applies and the row falls back to carat weight. */
+    if (current && !onCard && !dropStale) {
+      html = '<option value="' + esc(row.charni) + '" selected>' + esc(String(row.charni).trim()) +
+        " (not on rate card)</option>" + html;
+    }
+    return html;
+  }
+
   function stoneRowHTML(row, i) {
+    var isDiamond = String(row.type || "").toLowerCase() === "diamond";
     return (
       '<tr class="stone-row" data-i="' + i + '">' +
         '<td data-label="Label"><input class="input js-st-label" type="text" value="' + esc(row.label) + '" placeholder="DIA 1"></td>' +
         '<td data-label="Stone"><select class="select js-st-type">' + optionList(P.STONE_TYPES, row.type) + "</select></td>" +
         '<td data-label="Shape"><select class="select js-st-shape">' + optionList(P.SHAPES, row.shape) + "</select></td>" +
         '<td data-label="Colour/Clarity"><input class="input js-st-quality" type="text" value="' + esc(row.quality) + '" placeholder="GH/VS"></td>' +
-        '<td data-label="Charni"><input class="input js-st-charni" type="text" value="' + esc(row.charni || "") + '" placeholder="+2"></td>' +
-        '<td data-label="Ct / stone" class="num"><input class="input num js-st-ct" type="number" min="0" step="0.001" value="' + esc(row.perStoneCt) + '"></td>' +
+        '<td data-label="Charni">' +
+          '<select class="select js-st-charni" aria-label="Charni size"' + (isDiamond ? "" : " hidden") + ">" +
+            charniOptionsHTML(row) +
+          "</select>" +
+          '<span class="st-dash js-st-nocharni"' + (isDiamond ? " hidden" : "") + ' aria-hidden="true">—</span>' +
+        "</td>" +
+        '<td data-label="Ct / stone" class="num">' +
+          '<input class="input num js-st-ct" type="number" min="0" step="0.001" value="' + esc(row.perStoneCt) + '">' +
+          '<span class="st-rate js-st-ctauto" hidden></span>' +
+        "</td>" +
         '<td data-label="Stones" class="num"><input class="input num js-st-qty" type="number" min="0" step="1" value="' + esc(row.qty) + '"></td>' +
         '<td data-label="₹ / carat" class="num js-st-ratecell">' +
           '<input class="input num js-st-rate" type="number" min="0" step="0.01" value="' + esc(row.perCaratPrice) + '">' +
@@ -300,6 +333,20 @@
         '<td class="cell-actions"><button type="button" class="gbtn js-st-remove" aria-label="Remove this stone row">Remove</button></td>' +
       "</tr>"
     );
+  }
+
+  /* The charni list depends on shape + clarity, so rebuild it whenever
+     either changes — keeping the current pick if the new list still has it. */
+  function rebuildCharni(tr) {
+    if (!tr) return;
+    var sel = tr.querySelector(".js-st-charni");
+    if (!sel) return;
+    sel.innerHTML = charniOptionsHTML({
+      type: tr.querySelector(".js-st-type").value,
+      shape: tr.querySelector(".js-st-shape").value,
+      quality: tr.querySelector(".js-st-quality").value,
+      charni: sel.value
+    }, true);
   }
 
   function editorBodyHTML(piece) {
@@ -366,7 +413,8 @@
             '<table class="atable stones__table">' +
               "<thead><tr>" +
                 "<th scope=\"col\">Label</th><th scope=\"col\">Stone</th><th scope=\"col\">Shape</th>" +
-                "<th scope=\"col\">Colour/Clarity</th><th scope=\"col\" class=\"num\">Ct / stone</th>" +
+                "<th scope=\"col\">Colour/Clarity</th><th scope=\"col\">Charni</th>" +
+                "<th scope=\"col\" class=\"num\">Ct / stone</th>" +
                 "<th scope=\"col\" class=\"num\">Stones</th><th scope=\"col\" class=\"num\">₹ / carat</th>" +
                 "<th scope=\"col\" class=\"num\">Total ct</th><th scope=\"col\" class=\"num\">Value</th>" +
                 "<th scope=\"col\"><span class=\"sr-only\">Actions</span></th>" +
@@ -376,6 +424,9 @@
               "</tbody>" +
             "</table>" +
           "</div>" +
+          '<p class="stones__hint">Diamonds price from the Diamond Inventory. Round melee: pick the charni size, and the ' +
+            "carat weight and rate fill in from the card. Larger stones and fancy shapes: leave charni on " +
+            "“By carat weight” and type the carat per stone.</p>" +
         "</div>" +
 
         '<div class="psummary js-psummary"></div>' +
@@ -438,33 +489,53 @@
     var r = P.price(piece, { settings: eff, goldRate: gold, diamonds: diamonds });
 
     /* Per-row echo. Diamonds show the rate the inventory supplied and hide
-       the manual field, so there is one place a diamond price comes from. */
+       the manual field, so there is one place a diamond price comes from.
+       A charni-sized row also shows the carat the card gives that sieve. */
     [].slice.call(root.querySelectorAll(".stone-row")).forEach(function (tr, i) {
       var data = piece.stones[i];
       var row = P.stoneRow(data, diamonds);
       var isDiamond = String(data.type || "").toLowerCase() === "diamond";
+      var byCharni = isDiamond && row.mode === "charni";
       var input = tr.querySelector(".js-st-rate");
       var auto = tr.querySelector(".js-st-rateauto");
+      var ctInput = tr.querySelector(".js-st-ct");
+      var ctAuto = tr.querySelector(".js-st-ctauto");
 
+      /* Charni is a diamond thing — coloured stones show a dash instead */
+      tr.querySelector(".js-st-charni").hidden = !isDiamond;
+      tr.querySelector(".js-st-nocharni").hidden = isDiamond;
       input.hidden = isDiamond;
       auto.hidden = !isDiamond;
+      ctInput.hidden = byCharni;
+      ctAuto.hidden = !byCharni;
+
       if (isDiamond) {
         var hit = P.diamondRate(data, diamonds);
-        if (hit && !hit.missingSize) {
+        if (byCharni) {
+          ctAuto.textContent = hit.found && hit.ctw > 0 ? dec(hit.ctw, 3) : "—";
+          ctAuto.title = hit.found ? "Carat per stone for " + hit.row.charni + ", from the Diamond Inventory" : "";
+        }
+        auto.className = "st-rate js-st-rateauto" + (hit.found ? "" : " st-rate--missing");
+        if (hit.found) {
           auto.textContent = money(hit.rate);
-          auto.className = "st-rate js-st-rateauto";
-          auto.title = "From the Diamond Inventory";
-        } else if (hit && hit.missingSize) {
+          auto.title = "From the Diamond Inventory" + (byCharni ? " · " + hit.row.charni : "");
+        } else if (hit.reason === "charni") {
+          auto.textContent = "not on card";
+          auto.title = "The Diamond Inventory has no “" + String(data.charni || "").trim() + "” row for this shape and clarity" +
+            (hit.available && hit.available.length ? ". It lists " + hit.available.join(", ") + "." : ".");
+        } else if (hit.reason === "size") {
           /* Right stone, size not on the card. Never borrow a nearby rate —
              price per carat climbs steeply with size. */
           auto.textContent = "add " + dec(hit.wanted, 3) + " ct";
-          auto.className = "st-rate js-st-rateauto st-rate--missing";
-          auto.title = "The Diamond Inventory has no " + dec(hit.wanted, 3) + " ct rate for this stone. " +
-            "It lists " + hit.available.map(function (c) { return dec(c, 3); }).join(", ") + " ct — add this size there.";
+          auto.title = "The Diamond Inventory has no " + dec(hit.wanted, 3) + " ct rate for this stone" +
+            (hit.available.length ? ". It lists " + hit.available.map(function (c) { return dec(c, 3); }).join(", ") + " ct" : "") +
+            " — add this size there.";
+        } else if (hit.reason === "nosize") {
+          auto.textContent = "pick a size";
+          auto.title = "Choose a charni size, or type the carat per stone.";
         } else {
           auto.textContent = "no rate";
-          auto.className = "st-rate js-st-rateauto st-rate--missing";
-          auto.title = "Nothing in the Diamond Inventory matches this shape, clarity and charni";
+          auto.title = "Nothing in the Diamond Inventory matches this shape and clarity";
         }
       }
 
@@ -479,10 +550,10 @@
       (noRate ? '<p class="psummary__warn">No gold rate set yet — metal cost is counted as zero. Set the 995 rate on the Products page.</p>' : "") +
       (r.stones.unpriced
         ? '<p class="psummary__warn"><strong>' + r.stones.unpriced + " diamond row" +
-          (r.stones.unpriced === 1 ? " has" : "s have") + " no rate.</strong> " +
-          "Those stones are counted as zero, so this price is too low. Add the missing " +
-          "carat weight to the Diamond Inventory — a rate for a different size is not used, " +
-          "because price per carat changes sharply with stone size.</p>"
+          (r.stones.unpriced === 1 ? " has" : "s have") + " no price.</strong> " +
+          "Those stones count as zero, so this price is too low. Pick a charni size the rate card " +
+          "knows, or add the missing charni or carat weight to the Diamond Inventory — a rate for a " +
+          "different size is never borrowed, because price per carat changes sharply with stone size.</p>"
         : "") +
       '<table class="psum">' +
         "<caption>Cost breakdown</caption>" +
@@ -709,9 +780,12 @@
     });
 
     root.addEventListener("input", function (e) {
+      /* Clarity narrows which charni sizes apply, so refresh the list as she types */
+      if (e.target.closest(".js-st-quality")) rebuildCharni(e.target.closest(".stone-row"));
       if (e.target.closest(".ppane[data-pane='pricing']")) recalc(root);
     });
     root.addEventListener("change", function (e) {
+      if (e.target.closest(".js-st-type") || e.target.closest(".js-st-shape")) rebuildCharni(e.target.closest(".stone-row"));
       if (e.target.closest(".ppane[data-pane='pricing']")) recalc(root);
 
       var picker = e.target.closest(".js-p-photos");
