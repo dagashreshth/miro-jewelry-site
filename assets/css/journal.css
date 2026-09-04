@@ -1,0 +1,80 @@
+/* ============================================================
+   Journal — index and article pages.
+
+   Deliberately small: everything here leans on the tokens and layout
+   classes already in main.css, so the journal inherits the storefront's
+   look rather than restating it. Nothing in this file touches an
+   existing page.
+   ============================================================ */
+
+/* ---------- Index ---------- */
+.jlist {
+  display: grid;
+  gap: clamp(28px, 4vw, 44px);
+  margin-top: clamp(32px, 5vw, 56px);
+}
+
+.jcard {
+  display: grid;
+  gap: 10px;
+  padding-bottom: clamp(28px, 4vw, 44px);
+  border-bottom: 1px solid var(--line-soft);
+}
+.jcard:last-child { border-bottom: 0; padding-bottom: 0; }
+
+.jcard__meta {
+  font-size: 12px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.jcard__title { margin: 0; font-size: clamp(22px, 3.2vw, 30px); line-height: 1.25; }
+.jcard__title a { color: inherit; text-decoration: none; }
+.jcard__title a:hover { text-decoration: underline; text-underline-offset: 4px; }
+
+.jcard__sub { margin: 0; color: var(--ink-soft); line-height: 1.65; }
+
+/* ---------- Article ---------- */
+.jhead { margin-bottom: clamp(28px, 4vw, 44px); }
+.jhead__title { margin: 8px 0 14px; }
+.jhead__meta { font-size: 13px; color: var(--ink-soft); }
+
+/* The answer-first block. Sits above the fold and states the conclusion
+   before the reasoning — the shape both a hurried reader and an answer
+   engine want. */
+.jkey {
+  margin: 0 0 clamp(28px, 4vw, 40px);
+  padding: clamp(18px, 3vw, 26px);
+  background: var(--cream);
+  border-left: 2px solid var(--ink);
+}
+.jkey p { margin: 0; font-size: 17px; line-height: 1.7; }
+.jkey p + p { margin-top: 12px; }
+
+.jprose { font-size: 16.5px; line-height: 1.8; color: var(--ink); }
+.jprose h2 { margin: clamp(34px, 5vw, 52px) 0 14px; font-size: clamp(21px, 3vw, 27px); }
+.jprose h3 { margin: 28px 0 10px; font-size: 18px; }
+.jprose p { margin: 0 0 18px; }
+.jprose ul, .jprose ol { margin: 0 0 20px; padding-left: 22px; }
+.jprose li { margin-bottom: 10px; }
+.jprose strong { font-weight: 600; }
+.jprose a { color: var(--ink); text-underline-offset: 3px; }
+
+.jtable-wrap { overflow-x: auto; margin: 0 0 22px; }
+.jprose table { width: 100%; border-collapse: collapse; font-size: 15px; min-width: 460px; }
+.jprose th, .jprose td { padding: 11px 14px; text-align: left; border-bottom: 1px solid var(--line-soft); }
+.jprose th { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); }
+
+.jfaq { margin-top: clamp(40px, 6vw, 64px); padding-top: clamp(28px, 4vw, 40px); border-top: 1px solid var(--line); }
+.jfaq h2 { margin-top: 0; }
+.jfaq dt { font-weight: 600; margin-top: 20px; }
+.jfaq dd { margin: 8px 0 0; color: var(--ink-soft); line-height: 1.75; }
+
+.jend {
+  margin-top: clamp(40px, 6vw, 64px);
+  padding: clamp(22px, 3.5vw, 32px);
+  background: var(--cream-soft);
+}
+.jend p { margin: 0 0 16px; line-height: 1.7; }
+.jend p:last-child { margin-bottom: 0; }
