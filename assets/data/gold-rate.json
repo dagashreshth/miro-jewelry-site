@@ -2,14 +2,14 @@
   "source": "candere.com",
   "sourceUrl": "https://www.candere.com/gold-rate-today/mumbai",
   "city": "Mumbai",
-  "rateDate": "Sep 17, 2026",
-  "fetchedAt": "2026-09-17T12:43:32Z",
+  "rateDate": "Sep 18, 2026",
+  "fetchedAt": "2026-09-18T12:19:48Z",
   "unit": "INR per gram",
   "perGram": {
-    "k24_999": 15295.0,
-    "k24_995": 15233.76,
-    "k22": 14010.0,
-    "k18": 11471.0,
-    "k14": 8917.0
+    "k24_999": 15453.0,
+    "k24_995": 15391.13,
+    "k22": 14155.0,
+    "k18": 11590.0,
+    "k14": 9009.0
   }
 }
